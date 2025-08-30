@@ -9,6 +9,7 @@ import React, {
 // ==================
 // Types
 // ==================
+
 export type Recipe = {
   id: string;
   title: string;
@@ -18,17 +19,20 @@ export type Recipe = {
   image?: string;
   createdAt: string;
   updatedAt: string;
+  rating: number;
+  prepTime: number; // in minutes
 };
 
 type RecipeState = typeof initialState;
 
 type RecipeAction = {
   type: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload?: any;
 };
 
 export type RecipeContextValue = RecipeState & {
-  loadRecipes: () => void;
+  loadRecipes: (recipesFromApi?: Recipe[]) => void;
   addRecipe: (
     recipeData: Omit<Recipe, "id" | "createdAt" | "updatedAt">
   ) => void;
@@ -45,6 +49,7 @@ export type RecipeContextValue = RecipeState & {
 // ==================
 // Constants
 // ==================
+// eslint-disable-next-line react-refresh/only-export-components
 export const RECIPE_ACTIONS = {
   SET_LOADING: "SET_LOADING",
   SET_ERROR: "SET_ERROR",
@@ -66,6 +71,7 @@ const initialState = {
 // ==================
 // Context
 // ==================
+// eslint-disable-next-line react-refresh/only-export-components
 export const RecipeContext = createContext<RecipeContextValue | undefined>(
   undefined
 );
@@ -158,10 +164,13 @@ export const RecipeProvider: React.FC<PropsWithChildren> = ({ children }) => {
   // ==================
   // Action Creators
   // ==================
-  const loadRecipes = () => {
+  const loadRecipes = (recipesFromApi?: Recipe[]) => {
     try {
       dispatch({ type: RECIPE_ACTIONS.SET_LOADING, payload: true });
-
+      if (recipesFromApi) {
+        dispatch({ type: RECIPE_ACTIONS.LOAD_RECIPES, payload: recipesFromApi });
+        return;
+      }
       const savedRecipes = localStorage.getItem("recipes");
       const recipes = savedRecipes ? JSON.parse(savedRecipes) : [];
 
@@ -287,6 +296,7 @@ export const RecipeProvider: React.FC<PropsWithChildren> = ({ children }) => {
 // ==================
 // Hook
 // ==================
+// eslint-disable-next-line react-refresh/only-export-components
 export const useRecipes = (): RecipeContextValue => {
   const context = useContext(RecipeContext);
 

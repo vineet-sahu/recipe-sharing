@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { seedRecipes } from "../seeds/recipes";
+import { useRecipes } from "../context/RecipeContext";
 
 
 // Types
@@ -17,7 +17,17 @@ type Recipe = {
 };
 
 const RecipesPage: React.FC = () => {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+
+  const {
+    recipes: recipeList,
+    loadRecipes,
+    // addRecipe,
+    // updateRecipe,
+    // deleteRecipe,
+    // searchRecipes,
+  } = useRecipes();
+
+  const [recipes, setRecipes] = useState<Recipe[]>(recipeList);
   const [filteredRecipes, setFilteredRecipes] = useState<Recipe[]>([]);
 
   // Filters
@@ -25,21 +35,46 @@ const RecipesPage: React.FC = () => {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [ratingFilter, setRatingFilter] = useState<number | null>(null);
   const [timeFilter, setTimeFilter] = useState<number | null>(null);
+  
 
   // Sorting
   const [sortBy, setSortBy] = useState("");
+  useEffect(() => {
+    console.log("updatation");
+    setRecipes(recipeList);
+  }
+  , [recipeList]);
+
+  // useEffect(() => {
+  //   // Simulate fetch
+  //   const fetchRecipes = async () => {
+  //     setRecipes(seedRecipes);
+  //     setFilteredRecipes(seedRecipes);
+  //   };
+
+  //   fetchRecipes();
+  // }, []);
 
   useEffect(() => {
-    // Simulate fetch
     const fetchRecipes = async () => {
-      setRecipes(seedRecipes);
-      setFilteredRecipes(seedRecipes);
+      try {
+        // Replace this with real API call
+        const response = await fetch("/seeds/recipes.json")
+        const data = await response.json();
+
+        // Update global store
+        console.log("data", data);
+        loadRecipes(data);
+      } catch (error) {
+        console.error("Failed to fetch recipes", error);
+        // fallback: load from localStorage
+        loadRecipes();
+      }
     };
 
     fetchRecipes();
   }, []);
 
-  // Filtering + Sorting
   useEffect(() => {
     let results = [...recipes];
 
@@ -138,12 +173,12 @@ const RecipesPage: React.FC = () => {
       {/* Recipe List */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {filteredRecipes.length > 0 ? (
-          filteredRecipes.map((recipe) => (
+          filteredRecipes.map((recipe, idx) => (
             <div
-              key={recipe.id}
+              key={`${idx}-${recipe.id}`}
               className="border rounded-xl shadow-md p-4 hover:shadow-lg transition"
             >
-              <h2 className="text-lg font-semibold">{recipe.title}</h2>
+              <h2 className="text-lg font-semibold">{idx}. {recipe.title}</h2>
               <p className="text-sm text-gray-500">{recipe.category}</p>
               <p className="text-sm">⭐ {recipe.rating}</p>
               <p className="text-sm">⏱ {recipe.prepTime} mins</p>
