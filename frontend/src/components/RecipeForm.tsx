@@ -7,8 +7,9 @@ import {
   Clock, 
   // Upload,
   Save,
-  ArrowLeft
+  // ArrowLeft
 } from 'lucide-react';
+import { useAddRecipe, useUpdateRecipe } from '../hooks/useRecipes';
 
 // Types
 type Recipe = {
@@ -54,6 +55,8 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);  
   const [files, setFiles] = useState<ImageFile[]>([]);
 
+  const { mutateAsync: addRecipe } = useAddRecipe();
+  const { mutateAsync: updateRecipe } = useUpdateRecipe();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const filesWithPreview = acceptedFiles.map(file => 
@@ -137,9 +140,15 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
         updatedAt: new Date().toISOString()
       };
 
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (isEditing && recipe) {
+        await updateRecipe({ id: recipe.id, data: recipeData });
+        console.log("Recipe updated successfully!");
+      } else { 
+        await addRecipe(recipeData);
+        console.log("Recipe created successfully!");
+      }
+      
       onSave(recipeData);
-      alert(`Recipe ${isEditing ? 'updated' : 'created'} successfully!`);
     } catch (error) {
       console.error('Error saving recipe:', error);
       alert('Error saving recipe. Please try again.');
@@ -151,17 +160,17 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
       {/* Header */}
-      <div className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-40">
+      <div className="bg-white/80 backdrop-blur-md border-b border-gray-200 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-4">
-              <button
+              {/* <button
                 onClick={onCancel}
-                className="flex items-center gap-2 text-gray-600 hover:text-orange-600 transition-colors"
+                className="flex cursor-pointer items-center gap-2 text-gray-600 hover:text-orange-600 transition-colors"
               >
                 <ArrowLeft className="h-5 w-5" />
                 <span className="font-medium">Back</span>
-              </button>
+              </button> */}
               <div>
                 <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 flex items-center gap-3">
                   <div className="bg-gradient-to-r from-orange-500 to-red-500 p-2 rounded-full">
@@ -311,7 +320,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
                             <button
                               type="button"
                               onClick={() => removeFile(index)}
-                              className="absolute top-2 right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-80 hover:opacity-100"
+                              className="cursor-pointer absolute top-2 right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-80 hover:opacity-100"
                             >
                               ×
                             </button>
@@ -331,7 +340,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
               <button
                 type="button"
                 onClick={addIngredient}
-                className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-xl font-medium hover:shadow-lg transition-all duration-300"
+                className="cursor-pointer flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-xl font-medium hover:shadow-lg transition-all duration-300"
               >
                 <Plus className="h-4 w-4" />
                 Add Ingredient
@@ -354,7 +363,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
                     <button
                       type="button"
                       onClick={() => removeIngredient(index)}
-                      className="flex-shrink-0 p-3 text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+                      className="cursor-pointer flex-shrink-0 p-3 text-red-500 hover:bg-red-50 rounded-xl transition-colors"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -395,7 +404,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
             <button
               type="button"
               onClick={onCancel}
-              className="px-6 py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors"
+              className="cursor-pointer px-6 py-3 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors"
               disabled={isSubmitting}
             >
               Cancel
@@ -403,7 +412,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-300 disabled:opacity-50"
+              className="cursor-pointer flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-300 disabled:opacity-50"
             >
               <Save className="h-5 w-5" />
               {isSubmitting ? 'Saving...' : isEditing ? 'Update Recipe' : 'Save Recipe'}

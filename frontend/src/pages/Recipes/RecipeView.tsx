@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useRecipes } from '../../context/RecipeContext';
+import { useRecipe } from "../../hooks/useRecipes";
+
 import { 
   ArrowLeft, 
   Clock, 
@@ -13,96 +14,64 @@ import {
 } from 'lucide-react';
 import { CommentCard } from '../../components/CommentCard';
 import { Comment } from '../../types/Comment';
-
-// Types
-type Recipe = {
-  id: string;
-  title: string;
-  ingredients: string[];
-  steps: string;
-  category: string;
-  image?: string;
-  createdAt: string;
-  updatedAt: string;
-  rating: number;
-  prepTime: number; // in minutes
-};
+// import { useQueryClient } from '@tanstack/react-query';
+import { useAddComment, useComments } from '../../hooks/useComment';
+import {useAddRating} from '../../hooks/useRating';
 
 const RecipeView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { recipes } = useRecipes();
-  
-  const [recipe, setRecipe] = useState<Recipe | null>(null);
-  const [userRating, setUserRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
-  useEffect(() => {
-    const foundRecipe = recipes.find(r => r.id === id);
-    if (foundRecipe) {
-      setRecipe(foundRecipe);
-      // Load existing comments and user rating
-      loadCommentsAndRating(foundRecipe.id);
-    }
-  }, [id, recipes]);
+  const { data: recipe, isLoading, error } = useRecipe(id!);
+  const { data: fetchedComments = [], isLoading: isCommentsLoading, error: commentError } = useComments(id!);
 
-  const loadCommentsAndRating = (recipeId: string) => {
-    // Mock data - in real app, fetch from API
-    const mockComments: Comment[] = [
-      {
-        id: '1',
-        userId: 'user1',
-        userName: 'John Doe',
-        comment: 'Amazing recipe! My family loved it. Will definitely make it again.',
-        createdAt: '2024-01-15T10:30:00Z'
-      },
-      {
-        id: '2',
-        userId: 'user2',
-        userName: 'Sarah Smith',
-        comment: 'Great flavors, but I would reduce the cooking time by 5 minutes next time.',
-        createdAt: '2024-01-14T15:45:00Z'
-      }
-    ];
-    setComments(mockComments);
-    
-    // Load user's existing rating
-    const savedRating = localStorage.getItem(`rating-${recipeId}`);
-    if (savedRating) {
-      setUserRating(parseInt(savedRating));
-    }
-  };
+  const addCommentMutation = useAddComment();
+  const addRatingMutation = useAddRating();
+
+  console.log('Recipe data:', recipe);
+  console.log('Comments data----:', fetchedComments);  
+  console.log('Comments isCommentsLoading:', isCommentsLoading);
+  console.log('Comments commentError:', commentError);
+
+
+  useEffect(() => {
+    // Set comments from API
+    console.log('Fetched comments:', fetchedComments);
+    setComments(fetchedComments);
+  }, [fetchedComments]);
+
+  if (isLoading) {
+    return <p>Loading recipe...</p>;
+  }
+  if (error || !recipe) {
+    return <p>Recipe not found.</p>;
+  }
 
   const handleRating = (rating: number) => {
-    setUserRating(rating);
-    // Save to localStorage (in real app, send to API)
-    localStorage.setItem(`rating-${recipe?.id}`, rating.toString());
-    // In a real app, you would also update the recipe's overall rating
+
+    if (!recipe?._id) return;
+
+    addRatingMutation.mutate({ recipeId: recipe._id, rating });
   };
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim()) return;
-
+  
     setIsSubmittingComment(true);
-    
-    // Mock API call
-    setTimeout(() => {
-      const comment: Comment = {
-        id: Date.now().toString(),
-        userId: 'current-user',
-        userName: 'You',
-        comment: newComment,
-        createdAt: new Date().toISOString()
-      };
-      
-      setComments([comment, ...comments]);
-      setNewComment('');
+    try {
+      await addCommentMutation.mutateAsync({ recipeId: recipe._id, text: newComment.trim() });
+      setNewComment("");
+      setComments(fetchedComments);
+    } catch (err) {
+      alert(`Failed to submit comment ${err}`);
+    } finally {
       setIsSubmittingComment(false);
-    }, 1000);
+    }
   };
 
   if (!recipe) {
@@ -116,7 +85,7 @@ const RecipeView: React.FC = () => {
     );
   }
 
-  const steps = recipe.steps.split('\n').filter(step => step.trim());
+  const steps = (recipe.steps || "").split('\n').filter(step => step.trim());
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
@@ -126,7 +95,7 @@ const RecipeView: React.FC = () => {
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate(-1)}
-              className="flex items-center gap-2 text-gray-600 hover:text-orange-600 transition-colors"
+              className="flex cursor-pointer items-center gap-2 text-gray-600 hover:text-orange-600 transition-colors"
             >
               <ArrowLeft className="h-5 w-5" />
               <span className="font-medium">Back to Recipes</span>
@@ -258,7 +227,7 @@ const RecipeView: React.FC = () => {
                     >
                       <Star
                         className={`h-8 w-8 transition-colors ${
-                          star <= (hoverRating || userRating)
+                          star <= (hoverRating || recipe.rating)
                             ? 'fill-yellow-400 text-yellow-400'
                             : 'text-gray-300'
                         }`}
@@ -266,9 +235,9 @@ const RecipeView: React.FC = () => {
                     </button>
                   ))}
                 </div>
-                {userRating > 0 && (
+                {recipe.rating > 0 && (
                   <span className="text-sm text-gray-600">
-                    You rated this {userRating} star{userRating !== 1 ? 's' : ''}
+                    You rated this {recipe.rating} star{recipe.rating !== 1 ? 's' : ''}
                   </span>
                 )}
               </div>
@@ -302,7 +271,7 @@ const RecipeView: React.FC = () => {
                   <button
                     type="submit"
                     disabled={!newComment.trim() || isSubmittingComment}
-                    className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-xl font-medium hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="bg-gradient-to-r  cursor-pointer from-orange-500 to-red-500 text-white px-6 py-2 rounded-xl font-medium hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     <Send className="h-4 w-4" />
                     {isSubmittingComment ? 'Posting...' : 'Post Comment'}

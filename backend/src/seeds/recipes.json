@@ -1,0 +1,122 @@
+[
+  {
+    "id": "1",
+    "title": "Paneer Butter Masala",
+    "ingredients": ["Paneer", "Tomatoes", "Onions", "Butter", "Cream", "Spices"],
+    "steps": "Cook onions and tomatoes → Blend → Add spices & butter → Add paneer → Simmer.",
+    "category": "Main Course",
+    "image": "https://via.placeholder.com/400x300.png?text=No+Imag",
+    "rating": 5,
+    "prepTime": 40,
+    "createdAt": "2025-08-29T00:00:00.000Z",
+    "updatedAt": "2025-08-29T00:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "title": "Veg Spring Rolls",
+    "ingredients": ["Cabbage", "Carrot", "Capsicum", "Spring Roll Sheets", "Soy Sauce"],
+    "steps": "Stir fry veggies → Fill in sheets → Roll & deep fry.",
+    "category": "Starter",
+    "image": "https://via.placeholder.com/400x300.png?text=No+Imag",
+    "rating": 4,
+    "prepTime": 30,
+    "createdAt": "2025-08-29T00:00:00.000Z",
+    "updatedAt": "2025-08-29T00:00:00.000Z"
+  },
+  {
+    "id": "3",
+    "title": "Chocolate Brownie",
+    "ingredients": ["Flour", "Cocoa Powder", "Butter", "Sugar", "Eggs"],
+    "steps": "Mix dry & wet ingredients → Bake at 180°C for 25 min.",
+    "category": "Dessert",
+    "image": "https://via.placeholder.com/400x300.png?text=No+Imag",
+    "rating": 5,
+    "prepTime": 45,
+    "createdAt": "2025-08-29T00:00:00.000Z",
+    "updatedAt": "2025-08-29T00:00:00.000Z"
+  },
+  {
+    "id": "4",
+    "title": "Masala Dosa",
+    "ingredients": ["Rice Batter", "Potato", "Onion", "Mustard Seeds", "Curry Leaves"],
+    "steps": "Prepare dosa → Make potato masala → Fill dosa & serve with chutney.",
+    "category": "Main Course",
+    "image": "https://via.placeholder.com/400x300.png?text=No+Imag",
+    "rating": 4,
+    "prepTime": 50,
+    "createdAt": "2025-08-29T00:00:00.000Z",
+    "updatedAt": "2025-08-29T00:00:00.000Z"
+  },
+  {
+    "id": "5",
+    "title": "Cold Coffee",
+    "ingredients": ["Milk", "Instant Coffee", "Sugar", "Ice Cubes", "Ice Cream"],
+    "steps": "Blend coffee, sugar, milk & ice → Top with ice cream.",
+    "category": "Drink",
+    "image": "https://via.placeholder.com/400x300.png?text=No+Imag",
+    "rating": 3,
+    "prepTime": 10,
+    "createdAt": "2025-08-29T00:00:00.000Z",
+    "updatedAt": "2025-08-29T00:00:00.000Z"
+  },
+  {
+    "id": "6",
+    "title": "Chole Bhature",
+    "ingredients": ["Chickpeas", "Tomatoes", "Onions", "Flour", "Spices"],
+    "steps": "Cook chickpeas with masala → Fry bhature → Serve hot.",
+    "category": "Main Course",
+    "image": "https://via.placeholder.com/400x300.png?text=No+Imag",
+    "rating": 5,
+    "prepTime": 60,
+    "createdAt": "2025-08-29T00:00:00.000Z",
+    "updatedAt": "2025-08-29T00:00:00.000Z"
+  },
+  {
+    "id": "7",
+    "title": "Hakka Noodles",
+    "ingredients": ["Noodles", "Cabbage", "Carrots", "Soy Sauce", "Garlic"],
+    "steps": "Boil noodles → Stir fry veggies → Add sauces & toss.",
+    "category": "Main Course",
+    "image": "https://via.placeholder.com/400x300.png?text=No+Imag",
+    "rating": 4,
+    "prepTime": 25,
+    "createdAt": "2025-08-29T00:00:00.000Z",
+    "updatedAt": "2025-08-29T00:00:00.000Z"
+  },
+  {
+    "id": "8",
+    "title": "Pav Bhaji",
+    "ingredients": ["Potatoes", "Tomatoes", "Peas", "Onions", "Pav Buns"],
+    "steps": "Cook mashed veggies with masala → Toast pav with butter → Serve with bhaji.",
+    "category": "Main Course",
+    "image": "https://via.placeholder.com/400x300.png?text=No+Imag",
+    "rating": 5,
+    "prepTime": 35,
+    "createdAt": "2025-08-29T00:00:00.000Z",
+    "updatedAt": "2025-08-29T00:00:00.000Z"
+  },
+  {
+    "id": "9",
+    "title": "Gulab Jamun",
+    "ingredients": ["Khoya", "Flour", "Sugar", "Cardamom", "Oil"],
+    "steps": "Make dough balls → Fry → Soak in sugar syrup.",
+    "category": "Dessert",
+    "image": "https://via.placeholder.com/400x300.png?text=No+Imag",
+    "rating": 5,
+    "prepTime": 50,
+    "createdAt": "2025-08-29T00:00:00.000Z",
+    "updatedAt": "2025-08-29T00:00:00.000Z"
+  },
+  {
+    "id": "10",
+    "title": "Chicken Biryani",
+    "ingredients": ["Chicken", "Basmati Rice", "Onions", "Tomatoes", "Spices"],
+    "steps": "Cook chicken with spices → Layer with rice → Dum cook.",
+    "category": "Main Course",
+    "image": "https://via.placeholder.com/400x300.png?text=No+Imag",
+    "rating": 5,
+    "prepTime": 90,
+    "createdAt": "2025-08-29T00:00:00.000Z",
+    "updatedAt": "2025-08-29T00:00:00.000Z"
+  }
+]

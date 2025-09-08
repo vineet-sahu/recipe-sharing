@@ -6,20 +6,34 @@ export interface RatingInfo {
 
 export type RecipeType = "Veg" | "Non-Veg";
 
-export interface Recipe {
-  id: string;
+export interface Recipe extends RecipeBase {
+  _id: string;
+}
+
+export type NewRecipe = Omit<RecipeBase, 'createdAt' | 'updatedAt'>;
+
+interface RecipeBase {
   title: string;
   ingredients: string[];
-  steps: string;
   category: string;
-  image?: string;
-  rating: number; // overall rating (can be average)
-  prepTime: number; // in minutes
   type?: RecipeType; // defaults to Veg if not defined
-  createdAt: string; // ISO date
-  updatedAt: string; // ISO date
+  prepTime?: number; // in minutes
+  steps?: string;
+  image?: string;
+  rating: number;
+  createdAt?: string; // ISO date
+  updatedAt?: string; // ISO date
   ratings?: RatingInfo;
   servingSize?: number;
   calories?: number;
   authorId?: string;
 }
+
+
+export interface Filters {
+  searchIngredient?: string;
+  categoryFilter?: string;
+  ratingFilter?: number | null;
+  timeFilter?: number | null;
+  sortBy?: string;
+};

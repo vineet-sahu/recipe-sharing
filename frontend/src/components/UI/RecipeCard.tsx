@@ -1,4 +1,8 @@
-import { Calendar, ChefHat, Clock, Eye, Heart, Star, Users } from "lucide-react";
+import { Calendar, ChefHat, Clock, Eye, 
+  // Heart, 
+  Star, 
+  // Users 
+} from "lucide-react";
 import { Recipe } from "../../types/Recipe";
 import placeholderImage from "../../assets/recipe-placeholder.svg";
 
@@ -42,15 +46,20 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
 
           {/* Category Badge */}
           <div className="absolute top-3 left-3">
-            <span className="bg-white/90 backdrop-blur-sm text-gray-800 px-3 py-1 rounded-full text-sm font-medium">
+            <a
+              href={`/recipes?category=${encodeURIComponent(recipe.category)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/90 backdrop-blur-sm text-gray-800 px-3 py-1 rounded-full text-sm font-medium hover:bg-gray-100 transition"
+            >
               {recipe.category}
-            </span>
+            </a>
           </div>
 
           {/* Heart Icon */}
-          <button className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors">
+          {/* <button className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors">
             <Heart className="h-4 w-4 text-gray-600 hover:text-red-500 transition-colors" />
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -87,20 +96,20 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
           </div>
           <div className="flex items-center gap-1">
             <Calendar className="h-4 w-4" />
-            <span>{new Date(recipe.createdAt).toLocaleDateString()}</span>
+            <span>{new Date(recipe.createdAt!).toLocaleDateString()}</span>
           </div>
         </div>
 
         {/* Action Buttons */}
         <div className="flex gap-2">
           <button className="flex-1 cursor-pointer bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-xl font-medium hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
-          onClick={() => window.location.href = `/recipes/${recipe.id}`}>
+          onClick={() => window.location.href = `/recipes/${recipe._id}`}>
             <Eye className="h-4 w-4" />
             View Recipe
           </button>
-          <button className="px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center">
+          {/* <button className="px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center">
             <Users className="h-4 w-4" />
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

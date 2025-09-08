@@ -1,12 +1,21 @@
 import { ChefHat, Users, Clock, Star, TrendingUp, Heart } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
 
+  const navigate = useNavigate();
 
+  const categoriesWithIcon = [
+    { name: "Breakfast", emoji: "🥞", color: "from-yellow-400 to-orange-500" },
+    { name: "Dessert", emoji: "🍰", color: "from-pink-400 to-rose-500" },
+    { name: "Drink", emoji: "🥤", color: "from-blue-400 to-indigo-500" },
+    { name: "Main Course", emoji: "🍛", color: "from-red-400 to-red-500" },
+    { name: "Starter", emoji: "🥗", color: "from-emerald-400 to-green-500" }
+  ]
   return (
     <>
           {/* Hero Section */}
-          <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-orange-100/20 to-yellow-100/20"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-24">
           <div className="text-center">
@@ -28,15 +37,15 @@ const HomePage = () => {
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <button
-                onClick={() => console.log('Navigate to /recipes')}
-                className="group bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2"
+                onClick={() => {console.log('Navigate to /recipes'); navigate('/recipes');}}
+                className="group cursor-pointer bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2"
               >
                 <Star className="h-5 w-5 group-hover:rotate-12 transition-transform" />
                 Browse Recipes
               </button>
               <button
-                onClick={() => console.log('Navigate to /create')}
-                className="group bg-white text-gray-900 px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 border-2 border-gray-200 hover:border-orange-300 flex items-center justify-center gap-2"
+                onClick={() => {console.log('Navigate to /create'); navigate('/create_recipes');}}
+                className="group cursor-pointer bg-white text-gray-900 px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 border-2 border-gray-200 hover:border-orange-300 flex items-center justify-center gap-2"
               >
                 <ChefHat className="h-5 w-5 group-hover:scale-110 transition-transform" />
                 Share Your Recipe
@@ -136,8 +145,8 @@ const HomePage = () => {
           </p>
           
           <button
-            onClick={() => console.log('Navigate to /create')}
-            className="inline-flex items-center gap-3 bg-gradient-to-r from-orange-500 to-red-500 text-white px-10 py-5 rounded-full text-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300 group"
+            onClick={() => {console.log('Navigate to /create'); navigate('/create_recipes');}}
+            className="cursor-pointer inline-flex items-center gap-3 bg-gradient-to-r from-orange-500 to-red-500 text-white px-10 py-5 rounded-full text-xl font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300 group"
           >
             <ChefHat className="h-6 w-6 group-hover:rotate-12 transition-transform" />
             Start Sharing Today
@@ -156,19 +165,14 @@ const HomePage = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {[
-            { name: "Italian", emoji: "🍝", color: "from-red-400 to-red-500" },
-            { name: "Asian", emoji: "🥢", color: "from-yellow-400 to-orange-500" },
-            { name: "Mexican", emoji: "🌮", color: "from-green-400 to-green-500" },
-            { name: "Desserts", emoji: "🍰", color: "from-pink-400 to-rose-500" },
-            { name: "Healthy", emoji: "🥗", color: "from-emerald-400 to-green-500" },
-            { name: "Quick", emoji: "⚡", color: "from-blue-400 to-indigo-500" }
-          ].map((category) => (
+        <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(120px,1fr))]">
+          {categoriesWithIcon.map((category) => (
             <button
               key={category.name}
-              onClick={() => console.log(`Navigate to /recipes?category=${category.name.toLowerCase()}`)}
-              className={`group bg-gradient-to-br ${category.color} rounded-2xl p-6 text-center text-white hover:scale-105 transform transition-all duration-300 shadow-lg hover:shadow-xl`}
+              onClick={() =>
+                navigate(`/recipes?category=${category.name.toLowerCase()}`)
+              }
+              className={`cursor-pointer group bg-gradient-to-br ${category.color} rounded-2xl p-6 text-center text-white hover:scale-105 transform transition-all duration-300 shadow-lg hover:shadow-xl`}
             >
               <div className="text-3xl mb-3 group-hover:scale-110 transition-transform">
                 {category.emoji}

@@ -1,8 +1,9 @@
 export type Comment = {
 
-    id: string;
+    _id: string;
     userId?:  string;
-    comment: string;
+    user?: any;
+    text: string;
     createdAt?: string;
     updatedAt?: string;
     recipeId?: string;
