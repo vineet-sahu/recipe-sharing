@@ -3,7 +3,28 @@
 
 set -e  # exit on error
 
-echo "Starting ShareMyRecipe setup..."
+echo "🚀 Starting ShareMyRecipe setup..."
+
+# ----------- 0. Install Node.js 20 via NVM -----------
+
+echo "Checking for NVM..."
+if ! command -v nvm &> /dev/null
+then
+  echo "NVM not found. Installing NVM..."
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+  export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # load nvm
+else
+  echo "NVM already installed."
+fi
+
+echo "Installing Node.js 20..."
+nvm install 20
+nvm use 20
+nvm alias default 20
+
+echo "✅ Node version: $(node -v)"
+echo "✅ NPM version: $(npm -v)"
 
 # ----------- 1. Install project dependencies -----------
 
@@ -51,4 +72,4 @@ gnome-terminal -- bash -c "cd backend && npm run dev; exec bash"
 # Start frontend in a separate terminal window
 gnome-terminal -- bash -c "cd frontend && npm start; exec bash"
 
-echo "Setup complete! Backend running on port 5000, frontend on port 3000."
+echo "🎉 Setup complete! Backend running on port 5000, frontend on port 3000."
