@@ -32,9 +32,9 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
       {/* Image */}
       <div className="aspect-w-16 aspect-h-9">
         <div className="relative h-48 overflow-hidden">
-          {recipe.image ? (
+          {(recipe.image || recipe.imageUrl) ? (
             <img
-              src={placeholderImage}
+              src={recipe.image || recipe.imageUrl || placeholderImage}
               alt={recipe.title}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />

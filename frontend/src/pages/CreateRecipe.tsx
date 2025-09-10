@@ -1,6 +1,7 @@
 import React from "react";
 import RecipeForm from "../components/RecipeForm";
 import { useNavigate } from "react-router-dom";
+import { Recipe } from "../types/Recipe";
 
 export const CreateRecipe: React.FC = () => { 
 
@@ -9,8 +10,8 @@ export const CreateRecipe: React.FC = () => {
 
   return (
     <RecipeForm 
-    onSave = {() => {
-      navigate("/recipes");
+    onSave = {(recipe: Recipe) => {
+      navigate("/recipes/" + recipe._id);
     }}
     />
   );

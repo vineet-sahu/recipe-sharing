@@ -8,12 +8,12 @@ declare module "express-session" {
       user?: {
         _id: string;
         email: string;
+        name?: string;
       };
     }
   }
 
   export const login =  async (req: Request, res: Response) => {
-    console.log(req.body);
     const { email, password } = req.body;
   
     if (!email || !password) {
@@ -57,7 +57,6 @@ declare module "express-session" {
   //
   export const session = (req: Request, res: Response) => {
     const authHeader = req.headers.authorization;
-    console.log("req.headers", req.headers);
     if (!authHeader) return res.status(401).json({ message: "No token provided" });
   
     const token = authHeader.split(" ")[1] || "";
@@ -66,4 +65,36 @@ declare module "express-session" {
     if (!decoded) return res.status(401).json({ message: "Invalid or expired token" });
   
     return res.json({ user: decoded });
+  };
+
+
+  export const signup = async (req: Request, res: Response) => {
+    const {name, email, password} = req.body;
+
+    try {
+      if (!name || !email || !password) {
+        return res.status(400).json({
+          success: false,
+          message: "Name, email and password are required",
+          missing: {
+            name: !name ? "Name is required" : undefined,
+            email: !email ? "Email is required" : undefined,
+            password: !password ? "Password is required" : undefined,
+          },
+        });
+      }
+      const newUser = await authService.createUser({name, email, password});
+  
+      return res.status(201).json({
+        success: true,
+        message: "User created successfully",
+        user: { id: newUser._id, email: newUser.email, name: newUser.name },
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error",
+        error: (error as Error).message,
+      });
+    }
   };

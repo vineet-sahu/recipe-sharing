@@ -43,3 +43,8 @@ export const useRecipeContext = () => {
   }
   return ctx;
 };
+
+// create context
+// create provider
+// use context
+

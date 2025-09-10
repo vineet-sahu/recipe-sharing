@@ -1,8 +1,9 @@
 
 import { Request, Response } from "express";
 // import recipes from "../../src/seeds/recipes.json";
-import RecipeModel from "../models/Recipe";
+import RecipeModel, { IRecipe } from "../models/Recipe";
 import Recipe from "../models/Recipe";
+import { MulterRequest } from '../types/MulterRequest';
 
 export const getRecipes = async (req: Request, res: Response) => {
   try {
@@ -48,7 +49,6 @@ export const getRecipes = async (req: Request, res: Response) => {
     }
 
 
-    console.log("db query", query)
     //  Query DB
     const recipes = await RecipeModel.find(query)
       .sort(sort)
@@ -96,20 +96,37 @@ export const getRecipeById = async (req: Request, res: Response) => {
   res.json({ success: true, recipe });
 }
 
-
 export const createRecipe = async (req: Request, res: Response) => {
   try {
     const createdBy = (req as any).user?._id;
 
-    console.log("create recipe user======", (req as any).user);
     if (!createdBy) {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
-    const recipe = new Recipe({ ...req.body, createdBy });
+    // If image was uploaded via multer-storage-cloudinary
+    const imageUrl = req.file?.path || "";
+
+
+    console.log("req.file=========================2222", req.file);
+    console.log("req.files======666666", req.files);
+
+
+    const recipeData: Partial<IRecipe> = {
+      ...req.body,
+      createdBy,
+      imageUrl, // store Cloudinary URL
+    };
+
+
+    console.log("before Created Recipe:", recipeData);
+
+    const recipe = new Recipe(recipeData);
     await recipe.save();
 
-    res.status(201).json({ success: true, recipe });
+    console.log("Created Recipe:", recipe);
+
+    res.status(201).json({ success: true, recipe, message: "Recipe created successfully" });
   } catch (error: any) {
     if (error.name === "ValidationError") {
       return res.status(400).json({ success: false, errors: error.errors });

@@ -5,10 +5,6 @@ export const addOrUpdateRating = async (req: Request, res: Response) => {
   const { recipeId, rating } = req.body;
   const userId = (req as any).user?._id;
 
-  console.log("addOrUpdateRating called");
-  console.log("req.body", req.body);
-  console.log(userId, recipeId, rating);
-
   if (!recipeId || !rating) {
     return res.status(400).json({ success: false, message: "Recipe ID and rating are required" });
   }
@@ -17,7 +13,6 @@ export const addOrUpdateRating = async (req: Request, res: Response) => {
     return res.status(401).json({ success: false, message: "Unauthorized" });
   }
 
-  console.log("asdsada==============");
   try {
     const recipe = await Recipe.findById(recipeId);
     if (!recipe) {

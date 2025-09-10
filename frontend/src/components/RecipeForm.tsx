@@ -10,21 +10,9 @@ import {
   // ArrowLeft
 } from 'lucide-react';
 import { useAddRecipe, useUpdateRecipe } from '../hooks/useRecipes';
-
-// Types
-type Recipe = {
-  id: string;
-  title: string;
-  ingredients: string[];
-  steps: string;
-  category: string;
-  image?: string;
-  createdAt: string;
-  updatedAt: string;
-  rating: number;
-  prepTime: number; // in minutes
-};
-
+import { toast } from 'react-toastify';
+import { AxiosResponse } from 'axios';
+import { Recipe } from '../types/Recipe';
 interface RecipeFormProps {
   recipe?: Recipe;
   isEditing?: boolean;
@@ -120,38 +108,48 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
     setFiles(files.filter((_, i) => i !== index));
   };
 
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  interface RecipeResponse extends AxiosResponse<any, any> {
+    recipe?:  Recipe;
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-
+  
     setIsSubmitting(true);
-
+  
     try {
-      const recipeData: Recipe = {
-        id: recipe?.id || Date.now().toString(),
-        title: formData.title.trim(),
-        category: formData.category,
-        prepTime: formData.prepTime,
-        image: formData.image.trim() || undefined,
-        ingredients: formData.ingredients.filter(ing => ing.trim()),
-        steps: formData.steps.trim(),
-        rating: recipe?.rating || 0,
-        createdAt: recipe?.createdAt || new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-
-      if (isEditing && recipe) {
-        await updateRecipe({ id: recipe.id, data: recipeData });
-        console.log("Recipe updated successfully!");
-      } else { 
-        await addRecipe(recipeData);
-        console.log("Recipe created successfully!");
+      const formPayload = new FormData();
+      formPayload.append("title", formData.title.trim());
+      formPayload.append("category", formData.category);
+      formPayload.append("prepTime", formData.prepTime.toString());
+      formData.ingredients
+        .filter((ing) => ing.trim())
+        .forEach((ing, i) => formPayload.append(`ingredients[${i}]`, ing));
+      formPayload.append("steps", formData.steps.trim());
+  
+      // Add image if user uploaded a new one
+      if (files.length > 0) {
+        formPayload.append("image", files[0]); // multer expects `image`
       }
-      
-      onSave(recipeData);
+  
+      let response: RecipeResponse;
+      if (isEditing && recipe) {
+        response = await updateRecipe({ id: recipe._id, data: formPayload as Partial<Recipe>});
+        console.log("Recipe updated successfully!");
+        toast.success("Recipe updated successfully!");
+      } else {
+        response = await addRecipe(formPayload as Partial<Recipe>);
+        console.log("Recipe created successfully!");
+        toast.success("Recipe created successfully!");
+      }
+  
+      onSave((response.recipe || recipe) as Recipe);
     } catch (error) {
-      console.error('Error saving recipe:', error);
-      alert('Error saving recipe. Please try again.');
+      console.error("Error saving recipe:", error);
+      alert("Error saving recipe. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -352,6 +350,11 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
                 <div key={index} className="flex gap-3">
                   <div className="flex-1">
                     <input
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                        }
+                      }}
                       type="text"
                       value={ingredient}
                       onChange={(e) => handleIngredientChange(index, e.target.value)}

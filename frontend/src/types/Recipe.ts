@@ -20,6 +20,7 @@ interface RecipeBase {
   prepTime?: number; // in minutes
   steps?: string;
   image?: string;
+  imageUrl?: string;
   rating: number;
   createdAt?: string; // ISO date
   updatedAt?: string; // ISO date

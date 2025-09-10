@@ -1,23 +1,30 @@
 import React from "react";
-import { useAuth } from "../context/AuthContext";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { loginUser } from "../services/auth";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { registerUser } from "../services/auth"; // <-- you’ll need to create this API call
 
-export default function Login() {
-  const { login } = useAuth();
+export const Signup = () =>{
   const [loading, setLoading] = React.useState(false);
+  const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
-  const [fieldErrors, setFieldErrors] = React.useState<{ email?: string; password?: string }>({});
+  const [fieldErrors, setFieldErrors] = React.useState<{
+    name?: string;
+    email?: string;
+    password?: string;
+    confirmPassword?: string;
+  }>({});
 
   const navigate = useNavigate();
-  const [params] = useSearchParams();
-  const redirectTo = params.get("redirect") || "/";
 
   const validate = () => {
-    const errors: { email?: string; password?: string } = {};
+    const errors: typeof fieldErrors = {};
+
+    if (!name.trim()) {
+      errors.name = "Name is required";
+    }
 
     if (!email) {
       errors.email = "Email is required";
@@ -31,6 +38,10 @@ export default function Login() {
       errors.password = "Password must be at least 4 characters";
     }
 
+    if (confirmPassword !== password) {
+      errors.confirmPassword = "Passwords do not match";
+    }
+
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -39,20 +50,18 @@ export default function Login() {
     e.preventDefault();
     setError(null);
 
-    if (!validate()) return; // Stop if validation fails
+    if (!validate()) return;
 
     setLoading(true);
     try {
-      const { token } = await loginUser(email, password);
-      await login!(token);
-
-      console.log("Login successful, redirecting to:", redirectTo);
-      toast.success(`Login successful!`);
-      navigate(redirectTo);
+      await registerUser({ name, email, password }); // call your API
+      console.log("Signup successful, redirecting to login...");
+      toast.success("Signup successful, redirecting to login...");
+      navigate("/login");
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      setError(err.message || "Login failed");
-      toast.error(err.message || "Login failed");
+      setError(err.message || "Signup failed");
+      toast.error(err.message || "Signup failed");
     } finally {
       setLoading(false);
     }
@@ -63,10 +72,29 @@ export default function Login() {
       <div className="w-full max-w-md bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-8 border border-gray-200">
         {/* Header */}
         <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-          Login to Your Account
+          Create an Account
         </h2>
 
         <form onSubmit={handleSubmit}>
+          {/* Name */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Name
+            </label>
+            <input
+              type="text"
+              onChange={(e) => setName(e.target.value)}
+              value={name}
+              placeholder="Enter your name"
+              className={`w-full px-4 py-2 rounded-lg border ${
+                fieldErrors.name ? "border-red-500" : "border-gray-300"
+              } focus:ring-2 focus:ring-green-500 focus:outline-none`}
+            />
+            {fieldErrors.name && (
+              <p className="text-red-600 text-xs mt-1">{fieldErrors.name}</p>
+            )}
+          </div>
+
           {/* Email */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -101,7 +129,30 @@ export default function Login() {
               } focus:ring-2 focus:ring-green-500 focus:outline-none`}
             />
             {fieldErrors.password && (
-              <p className="text-red-600 text-xs mt-1">{fieldErrors.password}</p>
+              <p className="text-red-600 text-xs mt-1">
+                {fieldErrors.password}
+              </p>
+            )}
+          </div>
+
+          {/* Confirm Password */}
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              placeholder="Confirm your password"
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              value={confirmPassword}
+              className={`w-full px-4 py-2 rounded-lg border ${
+                fieldErrors.confirmPassword ? "border-red-500" : "border-gray-300"
+              } focus:ring-2 focus:ring-green-500 focus:outline-none`}
+            />
+            {fieldErrors.confirmPassword && (
+              <p className="text-red-600 text-xs mt-1">
+                {fieldErrors.confirmPassword}
+              </p>
             )}
           </div>
 
@@ -110,13 +161,13 @@ export default function Login() {
             <p className="text-red-600 text-sm text-center mb-4">{error}</p>
           )}
 
-          {/* Login button */}
+          {/* Signup button */}
           <button
             type="submit"
             className="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition font-medium"
             disabled={loading}
           >
-            {loading ? "Logging in..." : "Login"}
+            {loading ? "Signing up..." : "Sign Up"}
           </button>
         </form>
 
@@ -127,14 +178,14 @@ export default function Login() {
           <div className="flex-grow border-t border-gray-300"></div>
         </div>
 
-        {/* Register link */}
+        {/* Login link */}
         <p className="text-center text-sm text-gray-600">
-          Don’t have an account?{" "}
+          Already have an account?{" "}
           <a
-            href="/register"
+            href="/login"
             className="text-green-600 hover:underline font-medium"
           >
-            Register
+            Login
           </a>
         </p>
       </div>

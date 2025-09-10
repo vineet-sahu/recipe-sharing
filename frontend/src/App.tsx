@@ -10,11 +10,14 @@ import "./App.css";
 import { Navbar } from "./components/UI/navbar";
 import RecipeView from "./pages/Recipes/RecipeView";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Login from "./pages/Login";
 
 // App.tsx
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
+import { Signup } from "./pages/Signup";
 
 const queryClient = new QueryClient();
 
@@ -40,8 +43,10 @@ function App() {
               />
 
               <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+              <ToastContainer position="top-right" autoClose={3000} />
           </div>
       </AuthProvider>
     </QueryClientProvider>

@@ -33,7 +33,6 @@ export const useRecipes = (filters: Filters) => {
 };
 
 
-
 export const useRecipe = (id: string) => {
     return useQuery<Recipe>({
       queryKey: ["recipe", id],

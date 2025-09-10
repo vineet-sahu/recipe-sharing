@@ -8,6 +8,7 @@ export interface LoginResponse {
   }
   
   const AUTH_URL = '/auth/login';
+  const SIGNUP_URL = '/auth/signup';
 
   export async function loginUser(email: string, password: string): Promise<LoginResponse> {
     try {
@@ -16,11 +17,25 @@ export interface LoginResponse {
         { email, password },
         { withCredentials: true }
       );
-      return res.data; // Axios automatically parses JSON
+      return res.data;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      // Axios puts error response inside error.response.data
       const message = error.response?.data?.message || "Login failed";
+      throw new Error(message);
+    }
+  }
+
+  
+  export async function registerUser({email, password, name}: {email: string, password: string, name: string}): Promise<LoginResponse> {
+    try {
+      const res = await api.post(
+        SIGNUP_URL,
+        { email, password, name },
+      );
+      return res.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      const message = error.response?.data?.message || "Sign Up failed";
       throw new Error(message);
     }
   }

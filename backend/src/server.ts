@@ -1,5 +1,7 @@
-import express from "express";
+// import express from "express";
 import { createServer } from "http";
+import dotenv from "dotenv";
+dotenv.config({ path: "./src/.env" });
 import app from "./app";
 import config from "./config";
 import mongoose from "mongoose";
