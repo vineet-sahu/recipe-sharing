@@ -1,41 +1,31 @@
 import { Request, Response } from "express";
+import mongoose from "mongoose";
 import Comment from "../models/Comment";
 import Recipe from "../models/Recipe";
+import { errorResponse, successResponse } from "../utils/response.util";
 
 export const createComment = async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user?._id;
+    const userId = (req as any).user?.id;
     const { recipeId, text } = req.body;
 
-    if (!userId) {
-      return res.status(401).json({ success: false, message: "Unauthorized" });
-    }
+    if (!userId) return errorResponse(res, "Unauthorized", 401);
+    if (!recipeId || !text) return errorResponse(res, "Recipe ID and text are required", 400);
+    if (!mongoose.Types.ObjectId.isValid(recipeId)) return errorResponse(res, "Invalid Recipe ID format", 400);
 
-    if (!recipeId || !text) {
-      return res.status(400).json({ success: false, message: "Recipe ID and text are required" });
-    }
-
-    // Ensure recipe exists
     const recipe = await Recipe.findById(recipeId);
-    if (!recipe) {
-      return res.status(404).json({ success: false, message: "Recipe not found" });
-    }
+    if (!recipe) return errorResponse(res, "Recipe not found", 404);
 
-    const comment = new Comment({
-      recipe: recipeId,
-      user: userId,
-      text,
-    });
+    const comment = await Comment.create({ recipe: recipeId, user: userId, text });
 
-    await comment.save();
-
-    res.status(201).json({ success: true, comment });
+    return successResponse(res, { comment }, "Comment created successfully", 201);
   } catch (error: any) {
-    if (error.name === "ValidationError") {
-      return res.status(400).json({ success: false, errors: error.errors });
-    }
     console.error(error);
-    res.status(500).json({ success: false, message: error.message });
+    if (error.name === "ValidationError") {
+      const validationErrors = Object.values(error.errors).map((err: any) => err.message);
+      return errorResponse(res, "Invalid input", 400, validationErrors);
+    }
+    return errorResponse(res, "Internal server error", 500, error.message);
   }
 };
 
@@ -43,23 +33,16 @@ export const getCommentsByRecipe = async (req: Request, res: Response) => {
   try {
     const { recipeId } = req.params;
 
-    if (!recipeId) {
-      return res.status(400).json({ success: false, message: "Recipe ID is required" });
-    }
-
-    // Optional: check if recipe exists
-    const recipe = await Recipe.findById(recipeId);
-    if (!recipe) {
-      return res.status(404).json({ success: false, message: "Recipe not found" });
-    }
+    if (!recipeId) return errorResponse(res, "Recipe ID is required", 400);
+    if (!mongoose.Types.ObjectId.isValid(recipeId)) return errorResponse(res, "Invalid Recipe ID format", 400);
 
     const comments = await Comment.find({ recipe: recipeId })
-      .populate("user", "email") // populate user email
+      .populate("user", "email")
       .sort({ createdAt: -1 });
 
-    res.json({ success: true, comments });
+    return successResponse(res, { comments }, "Comments retrieved successfully");
   } catch (error: any) {
     console.error(error);
-    res.status(500).json({ success: false, message: error.message });
+    return errorResponse(res, "Internal server error", 500, error.message);
   }
 };

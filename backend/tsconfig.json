@@ -44,9 +44,6 @@
     "resolveJsonModule": true,
   },
 
-  // Specify the files to include in the compilation
-  "include": ["src", "@types", "types"],
-
-  // Optionally, specify files or folders to exclude
+  "include": ["src", "types"],
   "exclude": ["node_modules", "dist"]
 }

@@ -1,60 +1,44 @@
 import { Request, Response } from "express";
 import authService from "../services/auth.service";
 import { signToken, verifyToken } from "../utils/jwt.util";
-
-
-declare module "express-session" {
-    interface SessionData {
-      user?: {
-        _id: string;
-        email: string;
-        name?: string;
-      };
-    }
-  }
+import { errorResponse, successResponse } from "../utils/response.util";
+import bcrypt from "bcryptjs";
 
   export const login =  async (req: Request, res: Response) => {
     const { email, password } = req.body;
-  
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Email and password are required",
-        missing: {
-          email: !email ? "Email is required" : undefined,
-          password: !password ? "Password is required" : undefined,
-        },
-      });
-    }
-  
-    // Replace with DB 
-    const foundUser = await authService.authenticate(email, password);
 
-    // debugger;
-    if (foundUser) {
-      const user = { _id: foundUser._id as string, email };
-      const token = signToken(user);
+    try {
+      const foundUser = await authService.authenticate(email, password);
   
-      req.session.user = user;
-      return res.json({ 
-        success: true, 
-        message: "Login successful", 
-        token, // send JWT
-        user: { id: foundUser._id, email: foundUser.email }, 
-    });
+      if (foundUser) {
+        const user = { _id: foundUser._id as string, email };
+        const token = signToken(user);
+    
+        req.session.user = user;
+        return successResponse(res, { token: token, user: user }, "Login successful");
+      }
+  
+      return errorResponse(res, "Invalid credentials", 401);
+      
+    } catch (error) {
+      return errorResponse(res, "Internal server error", 500, (error as Error).message);
     }
   
-    return res.status(401).json({
-      success: false,
-      message: "Invalid credentials",
-    });
   };
 
   export const logout = (req: Request, res: Response) => {
-    return res.json({ message: "Logout successful. Please delete the token on client side." });
+    try {
+      req.session.destroy((err) => {
+        if (err) {
+          return errorResponse(res, "Failed to logout", 500, err.message);
+        }
+      });
+    }
+    catch (error) {
+      return errorResponse(res, "Internal server error", 500, (error as Error).message);
+    }
   };
   
-  //
   export const session = (req: Request, res: Response) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).json({ message: "No token provided" });
@@ -62,39 +46,21 @@ declare module "express-session" {
     const token = authHeader.split(" ")[1] || "";
     const decoded = verifyToken(token);
   
-    if (!decoded) return res.status(401).json({ message: "Invalid or expired token" });
+    if (!decoded) return errorResponse(res, "IInvalid or expired token", 401);
   
     return res.json({ user: decoded });
   };
-
 
   export const signup = async (req: Request, res: Response) => {
     const {name, email, password} = req.body;
 
     try {
-      if (!name || !email || !password) {
-        return res.status(400).json({
-          success: false,
-          message: "Name, email and password are required",
-          missing: {
-            name: !name ? "Name is required" : undefined,
-            email: !email ? "Email is required" : undefined,
-            password: !password ? "Password is required" : undefined,
-          },
-        });
-      }
-      const newUser = await authService.createUser({name, email, password});
+      const hashedPwd = await bcrypt.hash(password, 10);
+      const newUser = await authService.createUser({name, email, password: hashedPwd});
   
-      return res.status(201).json({
-        success: true,
-        message: "User created successfully",
-        user: { id: newUser._id, email: newUser.email, name: newUser.name },
-      });
+      return successResponse(res, { user: { id: newUser._id, email: newUser.email, name: newUser.name } }, "Login successful", 201);
     } catch (error) {
-      return res.status(500).json({
-        success: false,
-        message: "Internal server error",
-        error: (error as Error).message,
-      });
+
+      return  errorResponse(res, "Internal server error", 500,  (error as Error).message);
     }
   };

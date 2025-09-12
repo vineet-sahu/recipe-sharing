@@ -3,10 +3,10 @@ dotenv.config();
 
 const config = {
   port: process.env.PORT || 5000,
-  sessionSecret: process.env.SESSION_SECRET || "supersecret",
-    // JWT secret
-  jwtSecret: process.env.JWT_SECRET || "jwt_supersecret",
-  mongoURI: process.env.MONGO_URI || "mongodb://mindfire:password@localhost:27017/sharemyrecipe?authSource=admin",
+  sessionSecret: process.env.SESSION_SECRET || "",
+  jwtSecret: process.env.JWT_SECRET || "",
+  mongoURI: process.env.MONGODB_URI || "",
+  isProd: process.env.NODE_ENV === "production",
 };
 
 export default config;

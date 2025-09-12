@@ -146,7 +146,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
         toast.success("Recipe created successfully!");
       }
   
-      onSave((response.recipe || recipe) as Recipe);
+      onSave((response.data.recipe) as Recipe);
     } catch (error) {
       console.error("Error saving recipe:", error);
       alert("Error saving recipe. Please try again.");
