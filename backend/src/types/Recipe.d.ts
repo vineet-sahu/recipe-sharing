@@ -16,13 +16,13 @@
     title: string;
     ingredients: string[];
     category: string;
-    type?: RecipeType; // defaults to Veg if not defined
-    prepTime?: number; // in minutes
+    type?: RecipeType;
+    prepTime?: number;
     steps?: string;
     image?: string;
-    rating: number; // overall rating (can be average)
-    createdAt?: string; // ISO date
-    updatedAt?: string; // ISO date
+    rating: number;
+    createdAt?: string;
+    updatedAt?: string;
     ratings?: RatingInfo;
     servingSize?: number;
     calories?: number;

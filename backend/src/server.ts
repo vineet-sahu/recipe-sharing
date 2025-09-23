@@ -1,4 +1,3 @@
-// import express from "express";
 import { createServer } from "http";
 import dotenv from "dotenv";
 dotenv.config({ path: "./src/.env" });
@@ -12,9 +11,12 @@ const server = createServer(app);
 
 
 mongoose.connect(config.mongoURI)
-.then(() => {console.log("db connected");})
+.then(() => { console.log("MongoDB connected");
+
+  console.log(`Environment: ${process.env.MONGODB_URI }`);
+ })
 .catch((err) => console.error("MongoDB connection error:", err));
 
 server.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

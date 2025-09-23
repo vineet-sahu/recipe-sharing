@@ -6,6 +6,7 @@ import notFound from "./middleware/notFound";
 import errorhandler from "./middleware/errorHandler";
 import helmet from "helmet";
 import rateLimiter from "./middleware/rateLimiter";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -13,7 +14,8 @@ app.use(helmet());
 app.use(corsConfig);
 app.use(sessionConfig);
 app.use(express.json());
-app.use(routes);
+app.use(cookieParser());
+app.use('/api', routes);
 app.use(notFound);
 app.use(errorhandler);
 app.use(rateLimiter);

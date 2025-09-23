@@ -1,6 +1,5 @@
 import config from "../config";
 import jwt, { Secret } from "jsonwebtoken";
-// import { UserPayload } from "../types"; 
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key';
 

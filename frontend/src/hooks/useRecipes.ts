@@ -29,6 +29,7 @@ export const useRecipes = (filters: Filters) => {
       lastPage.hasMore ? pages.length + 1 : undefined,
     initialPageParam: 1,
     staleTime: 1000 * 60,
+    retry: false,
   });
 };
 
@@ -47,7 +48,6 @@ export const useRecipe = (id: string) => {
 export const useAddRecipe = () => {
     const queryClient = useQueryClient();
 
-    // console.log("calling add recipe hook");
     return useMutation({
       mutationFn: (newRecipe: Partial<Recipe>) => api.post("/recipes", newRecipe),
       onSuccess: () => {
@@ -59,7 +59,6 @@ export const useAddRecipe = () => {
 
 export const useUpdateRecipe = () => {
     const queryClient = useQueryClient();
-    // console.log("calling update recipe hook");
 
     return useMutation({
       mutationFn: ({ id, data }: { id: string; data: Partial<Recipe> }) =>

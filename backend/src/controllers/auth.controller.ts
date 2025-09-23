@@ -4,6 +4,16 @@ import { signToken, verifyToken } from "../utils/jwt.util";
 import { errorResponse, successResponse } from "../utils/response.util";
 import bcrypt from "bcryptjs";
 
+
+  declare module "express-session" {
+    interface SessionData {
+      user?: {
+        _id: string;
+        email: string;
+      };
+    }
+  }
+
   export const login =  async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
@@ -14,7 +24,13 @@ import bcrypt from "bcryptjs";
         const user = { _id: foundUser._id as string, email };
         const token = signToken(user);
     
-        req.session.user = user;
+        res.cookie("auth_token", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production", 
+          sameSite: "lax",
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+
         return successResponse(res, { token: token, user: user }, "Login successful");
       }
   
@@ -28,10 +44,15 @@ import bcrypt from "bcryptjs";
 
   export const logout = (req: Request, res: Response) => {
     try {
-      req.session.destroy((err) => {
-        if (err) {
-          return errorResponse(res, "Failed to logout", 500, err.message);
-        }
+      res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: "Logged out successfully",
       });
     }
     catch (error) {
@@ -40,15 +61,13 @@ import bcrypt from "bcryptjs";
   };
   
   export const session = (req: Request, res: Response) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) return res.status(401).json({ message: "No token provided" });
+
+
+    const user = (req as any).user;
+
+    if (!user) return res.status(401).json({ message: "No token provided" });
   
-    const token = authHeader.split(" ")[1] || "";
-    const decoded = verifyToken(token);
-  
-    if (!decoded) return errorResponse(res, "IInvalid or expired token", 401);
-  
-    return res.json({ user: decoded });
+    return res.json({ user: user });
   };
 
   export const signup = async (req: Request, res: Response) => {

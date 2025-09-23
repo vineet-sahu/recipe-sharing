@@ -5,11 +5,13 @@ import User from "../models/User";
 export const authenticateJWT = async(req: Request, res: Response, next: NextFunction) => {
 
   try {
-    const authHeader = req.headers.authorization;
+    const token = req.cookies?.auth_token;
+
+    console.log("Token from cookies:", req.cookies);
+    console.log("Token from cookies auth_token:", req.cookies?.auth_token);
   
-    if (!authHeader) return res.status(401).json({ message: "No token provided" });
+    if (!token) return res.status(401).json({ message: "No token provided" });
     
-    const token = authHeader.split(" ")[1] || "";
     const decoded = verifyToken(token) as {_id:  string, email: string};
   
     const user = await User.findById(decoded._id);  

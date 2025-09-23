@@ -5,9 +5,7 @@ import {
   Plus, 
   X, 
   Clock, 
-  // Upload,
   Save,
-  // ArrowLeft
 } from 'lucide-react';
 import { useAddRecipe, useUpdateRecipe } from '../hooks/useRecipes';
 import { toast } from 'react-toastify';
@@ -130,9 +128,8 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
         .forEach((ing, i) => formPayload.append(`ingredients[${i}]`, ing));
       formPayload.append("steps", formData.steps.trim());
   
-      // Add image if user uploaded a new one
       if (files.length > 0) {
-        formPayload.append("image", files[0]); // multer expects `image`
+        formPayload.append("image", files[0]); 
       }
   
       let response: RecipeResponse;

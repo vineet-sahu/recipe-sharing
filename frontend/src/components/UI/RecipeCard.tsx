@@ -1,7 +1,5 @@
-import { Calendar, ChefHat, Clock, Eye, 
-  // Heart, 
-  Star, 
-  // Users 
+import { Calendar, ChefHat, Clock, Eye,
+  Star,
 } from "lucide-react";
 import { Recipe } from "../../types/Recipe";
 import placeholderImage from "../../assets/recipe-placeholder.svg";
@@ -11,7 +9,6 @@ type RecipeCardProps = {
 };
 
 export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
-  // helper for rendering stars (you may already have it elsewhere)
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
       <Star
@@ -79,7 +76,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
           </span>
         </div>
 
-        {/* Ingredients Preview */}
+        {/* Ingredients */}
         <div className="mb-4">
           <p className="text-sm text-gray-600 line-clamp-2">
             {recipe.ingredients.slice(0, 3).join(", ")}

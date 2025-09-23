@@ -11,26 +11,23 @@ export interface Recipe extends RecipeBase {
 }
 
 export type NewRecipe = Omit<RecipeBase, 'createdAt' | 'updatedAt'>;
-
 interface RecipeBase {
   title: string;
   ingredients: string[];
   category: string;
-  type?: RecipeType; // defaults to Veg if not defined
-  prepTime?: number; // in minutes
+  type?: RecipeType;
+  prepTime?: number;
   steps?: string;
   image?: string;
   imageUrl?: string;
   rating: number;
-  createdAt?: string; // ISO date
-  updatedAt?: string; // ISO date
+  createdAt?: string; 
+  updatedAt?: string;
   ratings?: RatingInfo;
   servingSize?: number;
   calories?: number;
   authorId?: string;
 }
-
-
 export interface Filters {
   searchIngredient?: string;
   categoryFilter?: string;

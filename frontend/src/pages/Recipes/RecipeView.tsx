@@ -1,30 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useRecipe } from "../../hooks/useRecipes";
 
 import { 
   ArrowLeft, 
   Clock, 
-//   Users, 
   Star, 
   ChefHat,
-  Utensils,
   MessageCircle,
-  Send
 } from 'lucide-react';
-import { CommentCard } from '../../components/CommentCard';
-import { Comment } from '../../types/Comment';
-// import { useQueryClient } from '@tanstack/react-query';
 import { useAddComment, useComments } from '../../hooks/useComment';
 import {useAddRating} from '../../hooks/useRating';
+import { Ingredients } from './Ingredients';
+import { Steps } from './Steps';
+import { Ratings } from './Ratings';
+import CommentsSection from './CommentSection';
 
 const RecipeView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [hoverRating, setHoverRating] = useState(0);
-  const [comments, setComments] = useState<Comment[]>([]);
+  // const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
-  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
   const { data: recipe, isLoading, error } = useRecipe(id!);
   const { data: fetchedComments = [], isLoading: isCommentsLoading, error: commentError } = useComments(id!);
@@ -36,13 +33,6 @@ const RecipeView: React.FC = () => {
   console.log('Comments data----:', fetchedComments);  
   console.log('Comments isCommentsLoading:', isCommentsLoading);
   console.log('Comments commentError:', commentError);
-
-
-  useEffect(() => {
-    // Set comments from API
-    console.log('Fetched comments:', fetchedComments);
-    setComments(fetchedComments);
-  }, [fetchedComments]);
 
   if (isLoading) {
     return <p>Loading recipe...</p>;
@@ -59,18 +49,12 @@ const RecipeView: React.FC = () => {
   };
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newComment.trim()) return;
-  
-    setIsSubmittingComment(true);
+    e.preventDefault();  
     try {
       await addCommentMutation.mutateAsync({ recipeId: recipe._id, text: newComment.trim() });
       setNewComment("");
-      setComments(fetchedComments);
     } catch (err) {
       alert(`Failed to submit comment ${err}`);
-    } finally {
-      setIsSubmittingComment(false);
     }
   };
 
@@ -142,7 +126,7 @@ const RecipeView: React.FC = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <MessageCircle className="h-4 w-4" />
-                  <span>{comments.length} comments</span>
+                  <span>{fetchedComments.length} comments</span>
                 </div>
               </div>
             </div>
@@ -153,147 +137,21 @@ const RecipeView: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Ingredients Section */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="bg-gradient-to-r from-orange-500 to-red-500 p-2 rounded-full">
-                  <Utensils className="h-5 w-5 text-white" />
-                </div>
-                <h2 className="text-xl font-bold text-gray-900">Ingredients</h2>
-              </div>
-
-              <div className="space-y-3">
-                {recipe.ingredients.map((ingredient, index) => (
-                  <div
-                    key={index}
-                    className="p-3 rounded-xl border border-gray-200 hover:border-orange-200 hover:bg-orange-50 transition-all"
-                  >
-                    <span>{ingredient}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          { recipe && <Ingredients recipe /> }
 
           {/* Instructions and Interactions Section */}
           <div className="lg:col-span-2 space-y-8">
             {/* Instructions */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="bg-gradient-to-r from-orange-500 to-red-500 p-2 rounded-full">
-                  <ChefHat className="h-5 w-5 text-white" />
-                </div>
-                <h2 className="text-xl font-bold text-gray-900">Instructions</h2>
-              </div>
-
-              <div className="space-y-4">
-                {steps.map((step, index) => (
-                  <div
-                    key={index}
-                    className="flex gap-4 p-4 rounded-xl border border-gray-200 hover:border-orange-200 hover:bg-orange-50 transition-all"
-                  >
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm bg-gradient-to-r from-orange-500 to-red-500 text-white">
-                      {index + 1}
-                    </div>
-                    <div className="flex-1">
-                      <p className="leading-relaxed text-gray-700">
-                        {step.trim()}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <Steps {...steps} />
 
             {/* Rating Section */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="bg-gradient-to-r from-orange-500 to-red-500 p-2 rounded-full">
-                  <Star className="h-5 w-5 text-white" />
-                </div>
-                <h2 className="text-xl font-bold text-gray-900">Rate this Recipe</h2>
-              </div>
-
-              <div className="flex items-center gap-4 mb-4">
-                <span className="text-gray-600">Your rating:</span>
-                <div className="flex gap-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      onClick={() => handleRating(star)}
-                      onMouseEnter={() => setHoverRating(star)}
-                      onMouseLeave={() => setHoverRating(0)}
-                      className="p-1 transition-transform hover:scale-110"
-                    >
-                      <Star
-                        className={`h-8 w-8 transition-colors ${
-                          star <= (hoverRating || recipe.rating)
-                            ? 'fill-yellow-400 text-yellow-400'
-                            : 'text-gray-300'
-                        }`}
-                      />
-                    </button>
-                  ))}
-                </div>
-                {recipe.rating > 0 && (
-                  <span className="text-sm text-gray-600">
-                    You rated this {recipe.rating} star{recipe.rating !== 1 ? 's' : ''}
-                  </span>
-                )}
-              </div>
-            </div>
+            <Ratings { ...{handleRating ,setHoverRating, hoverRating, recipe}} />
 
             {/* Comments Section */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="bg-gradient-to-r from-orange-500 to-red-500 p-2 rounded-full">
-                  <MessageCircle className="h-5 w-5 text-white" />
-                </div>
-                <h2 className="text-xl font-bold text-gray-900">
-                  Comments ({comments.length})
-                </h2>
-              </div>
-
-              {/* Add Comment Form */}
-              <form onSubmit={handleCommentSubmit} className="mb-8">
-                <div className="flex gap-4">
-                  <div className="flex-1">
-                    <textarea
-                      value={newComment}
-                      onChange={(e) => setNewComment(e.target.value)}
-                      placeholder="Share your thoughts about this recipe..."
-                      rows={3}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors resize-none"
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-end mt-3">
-                  <button
-                    type="submit"
-                    disabled={!newComment.trim() || isSubmittingComment}
-                    className="bg-gradient-to-r  cursor-pointer from-orange-500 to-red-500 text-white px-6 py-2 rounded-xl font-medium hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                  >
-                    <Send className="h-4 w-4" />
-                    {isSubmittingComment ? 'Posting...' : 'Post Comment'}
-                  </button>
-                </div>
-              </form>
-
-              {/* Comments List */}
-              <div className="space-y-4">
-                {comments.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <MessageCircle className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                    <p>No comments yet. Be the first to share your thoughts!</p>
-                  </div>
-                ) : (
-                  comments.map((comment) => (
-                    <CommentCard comment={comment}/>
-                  ))
-                )}
-              </div>
-            </div>
-          </div>
+            <CommentsSection
+              comments={fetchedComments}
+              onSubmitComment={handleCommentSubmit}   
+/>          </div>
         </div>
       </div>
     </div>

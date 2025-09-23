@@ -5,7 +5,7 @@ import { loginUser } from "../services/auth";
 import { toast } from "react-toastify";
 
 export default function Login() {
-  const { login } = useAuth();
+  const { afterLogin } = useAuth();
   const [loading, setLoading] = React.useState(false);
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -43,8 +43,8 @@ export default function Login() {
 
     setLoading(true);
     try {
-      const { token } = await loginUser(email, password);
-      await login!(token);
+      await loginUser(email, password);
+      await afterLogin!();
 
       console.log("Login successful, redirecting to:", redirectTo);
       toast.success(`Login successful!`);

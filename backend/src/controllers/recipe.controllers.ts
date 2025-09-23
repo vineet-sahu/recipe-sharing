@@ -1,30 +1,25 @@
 
 import { Request, Response } from "express";
-// import recipes from "../../src/seeds/recipes.json";
 import RecipeModel, { IRecipe } from "../models/Recipe";
 import Recipe from "../models/Recipe";
-import { MulterRequest } from '../types/MulterRequest';
 
 export const getRecipes = async (req: Request, res: Response) => {
   try {
-    //  Pagination
+    
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
     const skip = (page - 1) * limit;
 
-    //  Filters
     const search = req.query.search as string;
     const category = req.query.category as string;
     const rating = req.query.rating ? Number(req.query.rating) : null;
     const time = req.query.time ? Number(req.query.time) : null;
     const sortBy = req.query.sort as string;
 
-    //  Build query
     const query: any = {};
 
     if (search) {
-      query.ingredients = { $regex: search, $options: "i" }; // case-insensitive
-    }
+      query.ingredients = { $regex: search, $options: "i" };     }
 
     if (category) {
       query.category = { $regex: `^${category}$`, $options: "i"};
@@ -38,8 +33,7 @@ export const getRecipes = async (req: Request, res: Response) => {
       query.prepTime = { $lte: time };
     }
 
-    //  Sorting
-    let sort: any = {};
+        let sort: any = {};
     if (sortBy === "rating") {
       sort.rating = -1;
     } else if (sortBy === "date") {
@@ -49,8 +43,7 @@ export const getRecipes = async (req: Request, res: Response) => {
     }
 
 
-    //  Query DB
-    const recipes = await RecipeModel.find(query)
+      const recipes = await RecipeModel.find(query)
       .sort(sort)
       .skip(skip)
       .limit(limit);
@@ -82,8 +75,7 @@ export const getRecipeById = async (req: Request, res: Response) => {
       message: "Recipe ID is required"
     })
   } 
-  // const recipe = recipes.find(r => parseInt(r.id) === parseInt(id));
-
+  
   const recipe = await RecipeModel.findById(id)
 
   if (!recipe) {
@@ -104,8 +96,7 @@ export const createRecipe = async (req: Request, res: Response) => {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
-    // If image was uploaded via multer-storage-cloudinary
-    const imageUrl = req.file?.path || "";
+        const imageUrl = req.file?.path || "";
 
 
     console.log("req.file=========================2222", req.file);
@@ -115,8 +106,7 @@ export const createRecipe = async (req: Request, res: Response) => {
     const recipeData: Partial<IRecipe> = {
       ...req.body,
       createdBy,
-      imageUrl, // store Cloudinary URL
-    };
+      imageUrl,     };
 
 
     console.log("before Created Recipe:", recipeData);
@@ -144,15 +134,7 @@ export const updateRecipe = (req: Request, res: Response) => {
       message: "Title and ingredients are required"
     });
   }
-  // Dummy update - replace with DB call
-  const updatedRecipe = { id, title, ingredients };
+    const updatedRecipe = { id, title, ingredients };
   res.json({ success: true, recipe: updatedRecipe });
 }
 
-// export const deleteRecipe = (req: Request, res: Response) => {
-//   const { id } = req.params;
-//   // Dummy deletion - replace with DB call
-//   res.json({ success: true, message: `Recipe ${id} deleted` });
-// }   
-//       success: false,
-//         message: "Invalid email or password" }); 

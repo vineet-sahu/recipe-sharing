@@ -1,7 +1,6 @@
 import React from "react";
 import { Filter, Search } from "lucide-react";
 import { useRecipeContext } from "../context/RecipeContext";
-// import { useRecipeContext } from "../../context/RecipeContext";
 
 const RecipeFilters: React.FC = () => {
   const { filters, setFilters, clearFilters } = useRecipeContext();

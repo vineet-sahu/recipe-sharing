@@ -10,7 +10,7 @@ export interface IRecipe extends Document {
   ingredients: string[];
   category?: string; 
   steps?: string;
-  type?: "Veg" | "Non-Veg"; // defaults to Veg if not defined
+  type?: "Veg" | "Non-Veg"; 
   imageUrl?: string;
   prepTime?: number; 
   rating?: number;
@@ -20,7 +20,7 @@ export interface IRecipe extends Document {
   calories?: number;
   servingSize?: number;
 
-  // aggregated rating info
+  
   ratings?: {
     averageRating: number;
     totalReviews: number;
@@ -33,7 +33,7 @@ export interface IRecipe extends Document {
     };
   };
 
-  // per-user ratings
+  
   userRatings?: IUserRating[];
 }
 
@@ -42,7 +42,7 @@ const UserRatingSchema = new Schema<IUserRating>(
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
     rating: { type: Number, required: true, min: 1, max: 5 },
   },
-  { _id: false } // no separate _id for subdocuments
+  { _id: false }
 );
 
 const RecipeSchema: Schema<IRecipe> = new Schema(
@@ -59,7 +59,6 @@ const RecipeSchema: Schema<IRecipe> = new Schema(
     servingSize: { type: Number },
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: false },
 
-    // aggregated ratings
     ratings: {
       averageRating: { type: Number, default: 0 },
       totalReviews: { type: Number, default: 0 },
@@ -72,7 +71,6 @@ const RecipeSchema: Schema<IRecipe> = new Schema(
       },
     },
 
-    // per-user ratings
     userRatings: [UserRatingSchema],
   },
   { timestamps: true }

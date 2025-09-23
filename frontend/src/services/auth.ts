@@ -1,6 +1,4 @@
 import api from "./api";
-
-// src/services/auth.ts
 export interface LoginResponse {
     token: string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -22,6 +20,15 @@ export interface LoginResponse {
     } catch (error: any) {
       const message = error.response?.data?.message || "Login failed";
       throw new Error(message);
+    }
+  }
+
+  export async function logoutUser(): Promise<void> {
+    try {
+      await api.post('/auth/logout', {}, { withCredentials: true });
+    } catch (error) {
+      console.error("Logout failed", error);
+      throw new Error("Logout failed");
     }
   }
 

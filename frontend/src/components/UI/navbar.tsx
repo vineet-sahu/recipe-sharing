@@ -1,20 +1,20 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ChefHat, 
-  // Heart,
    Menu, X, Search, 
-  // User, 
   Home, LogOut, LogIn } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { logoutUser } from "../../services/auth";
+
 
 
       
 export const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const {logout, user} = useAuth();
   const location =  useLocation();
   const navigate = useNavigate();
 
+  const { afterLogout, user } = useAuth();
       {/* Navigation Bar */}
       return (<nav className="bg-white/90 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -59,7 +59,7 @@ export const Navbar: React.FC = () => {
                 {user ? (
                   <button
                     onClick={async () => {
-                      await logout?.();
+                      await logoutUser?.(); afterLogout?.();
                     }}
                     className="flex items-center gap-2 cursor-pointer text-gray-700 hover:text-orange-600 transition-colors font-medium"
                   >
@@ -147,7 +147,8 @@ export const Navbar: React.FC = () => {
                 {user ? (
                   <button
                     onClick={async () => {
-                      await logout?.();
+                      await logoutUser?.();
+                      navigate("/login");
                       setIsMenuOpen(false);
                     }}
                     className="flex items-center gap-3 w-full text-left px-3 py-2 text-red-600 hover:text-red-700 hover:bg-gray-50 rounded-lg transition-colors font-medium"

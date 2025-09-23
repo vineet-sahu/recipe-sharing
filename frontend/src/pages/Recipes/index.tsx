@@ -1,12 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { ChefHat, 
-  // Filter, 
   Search } from "lucide-react";
 import { RecipeCard } from "../../components/UI/RecipeCard";
 import { useRecipeContext } from "../../context/RecipeContext";
 import { useSearchParams } from "react-router-dom";
 import RecipeFilters from "../../components/RecipeFilters";
-// import { Recipe } from "../../types/Recipe";
 import { useRecipes } from "../../hooks/useRecipes";
 
 const Recipes: React.FC = () => {
@@ -45,8 +43,6 @@ const Recipes: React.FC = () => {
       }));
     }, [searchParams, setFilters]);
 
-
-    // Update URL when filters change
     useEffect(() => {
       const params: Record<string, string> = {};
       if (filters.searchIngredient) params.search = filters.searchIngredient;

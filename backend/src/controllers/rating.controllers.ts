@@ -7,7 +7,7 @@ export const addOrUpdateRating = async (req: Request, res: Response) => {
     const { recipeId, rating } = req.body;
     const userId = (req as any).user?._id;
 
-    // ✅ Input validation
+    
     if (!recipeId || typeof rating !== "number") {
       return errorResponse(res, "Recipe ID and numeric rating are required", 400);
     }
@@ -16,32 +16,32 @@ export const addOrUpdateRating = async (req: Request, res: Response) => {
       return errorResponse(res, "Unauthorized", 401);
     }
 
-    // ✅ Check recipe existence
+    
     const recipe = await Recipe.findById(recipeId);
     if (!recipe) {
       return errorResponse(res, "Recipe not found", 404);
     }
 
-    // ✅ Ensure userRatings array
+    
     if (!Array.isArray(recipe.userRatings)) {
       recipe.userRatings = [];
     }
 
-    // ✅ Check if user has rated before
+    
     const existingIndex = recipe.userRatings.findIndex(
       (r) => r.user.toString() === userId.toString()
     );
 
     if (existingIndex > -1) {
-      recipe.userRatings[existingIndex]!.rating = rating; // update existing
+      recipe.userRatings[existingIndex]!.rating = rating; 
     } else {
-      recipe.userRatings.push({ user: userId, rating }); // add new
+      recipe.userRatings.push({ user: userId, rating }); 
     }
 
-    // ✅ Recalculate aggregate rating
+    
     const totalRatings = recipe.userRatings.length;
     const totalScore = recipe.userRatings.reduce((acc, r) => acc + r.rating, 0);
-    const avgRating = Number((totalScore / totalRatings).toFixed(2)); // rounded
+    const avgRating = Number((totalScore / totalRatings).toFixed(2)); 
 
     const distribution = { "5": 0, "4": 0, "3": 0, "2": 0, "1": 0 };
     recipe.userRatings.forEach((r) => {

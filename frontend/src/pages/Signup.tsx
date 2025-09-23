@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { registerUser } from "../services/auth"; // <-- you’ll need to create this API call
+import { registerUser } from "../services/auth";
 
 export const Signup = () =>{
   const [loading, setLoading] = React.useState(false);

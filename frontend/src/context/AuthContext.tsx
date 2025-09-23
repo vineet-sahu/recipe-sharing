@@ -1,9 +1,7 @@
-// context/AuthContext.tsx
 import { createContext, useContext, useState, 
-  // useEffect, 
   ReactNode, 
   useEffect} from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { AxiosResponse } from "axios";
 
@@ -11,8 +9,8 @@ type AuthContextType = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   user: any |  null;
   loading?: boolean;
-  login?: (token: string) => void;
-  logout?: () => void;
+  afterLogin?: () => void;
+  afterLogout?: () => void;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -20,56 +18,42 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
 });
 
-// const AuthContext = createContext<AuthContextType | null>(null);
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [user, setUser] = useState<any | null>(null);
-    const [loading, setLoading] = useState(true);  // const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const location = useLocation();
 
-
-  useEffect(() => {
-    const token = localStorage.getItem("auth_token");
-    if (token) {
-      // Optional: decode token or fetch user from API
-      const userData = { token }; // simplified example
-      setUser(userData);
+  const fetchSession = async () => {
+    try {
+      const res: AxiosResponse = await api.get(
+        "/auth/session"
+      );
+      setUser(res.data.user);
+    } catch (error) {
+      setUser(null);
+      console.error("Failed to fetch session", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  }, []);
-
-  const login = async (token: string) => {
-    // optionally store in localStorage/sessionStorage
-    localStorage.setItem("auth_token", token);
-
-    console.log("Fetching user session with token:", token);
-    const res: AxiosResponse = await api.get(
-      "http://localhost:5000/api/auth/session",
-      { withCredentials: true }
-    );
-
-    setUser(res.data.user);
   };
 
-  const logout = async () => {
-    
-    await fetch("http://localhost:5000/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-    localStorage.removeItem("auth_token");
-    setUser(null);
-    if(location){
-      navigate(location);
-    } else {
-      navigate("/login");
+  useEffect(() => {
+    fetchSession();
+  }
+, []);
+
+  const afterLogout = async () => {
+    try {
+      setUser(null);
+      navigate("/login", { replace: true });
+    } catch (error) {
+      console.error("Logout failed", error);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, afterLogin: fetchSession, afterLogout, loading }}>
       {children}
     </AuthContext.Provider>
   );
