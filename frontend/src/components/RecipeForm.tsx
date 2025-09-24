@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { 
   ChefHat, 
@@ -40,6 +40,9 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [isSubmitting, setIsSubmitting] = useState(false);  
   const [files, setFiles] = useState<ImageFile[]>([]);
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [touched, setTouched] = useState<{[key: string]: boolean}>({});
+
 
   const { mutateAsync: addRecipe } = useAddRecipe();
   const { mutateAsync: updateRecipe } = useUpdateRecipe();
@@ -84,7 +87,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
     }
   };
 
-  const validateForm = () => {
+  const validateForm = useCallback(() => {
     const newErrors: {[key: string]: string} = {};
 
     if (!formData.title.trim()) newErrors.title = 'Recipe title is required';
@@ -98,7 +101,12 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [formData]);
+
+  useEffect(() => {
+    setIsFormValid(validateForm());
+  }, [formData, validateForm]);
+
 
   const removeFile = (index: number) => {
     const fileToRemove = files[index];
@@ -188,12 +196,13 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
                   type="text"
                   value={formData.title}
                   onChange={(e) => handleInputChange('title', e.target.value)}
+                  onBlur={() => setTouched(prev => ({ ...prev, title: true }))}
                   placeholder="Enter recipe title..."
                   className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-orange-500 transition-colors ${
-                    errors.title ? 'border-red-500' : 'border-gray-300 focus:border-orange-500'
+                    touched.title && errors.title ? 'border-red-500' : 'border-gray-300 focus:border-orange-500'
                   }`}
                 />
-                {errors.title && (
+                {touched.title && errors.title && (
                   <p className="text-red-500 text-sm mt-1">{errors.title}</p>
                 )}
               </div>
@@ -204,8 +213,9 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
                 <select
                   value={formData.category}
                   onChange={(e) => handleInputChange('category', e.target.value)}
+                  onBlur={() => setTouched(prev => ({ ...prev, category: true }))}
                   className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-orange-500 transition-colors ${
-                    errors.category ? 'border-red-500' : 'border-gray-300 focus:border-orange-500'
+                    touched.category && errors.category ? 'border-red-500' : 'border-gray-300 focus:border-orange-500'
                   }`}
                 >
                   <option value="">Select a category</option>
@@ -215,7 +225,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
                   <option value="Beverage">Beverage</option>
                   <option value="Snack">Snack</option>
                 </select>
-                {errors.category && (
+                {touched.category && errors.category && (
                   <p className="text-red-500 text-sm mt-1">{errors.category}</p>
                 )}
               </div>
@@ -230,14 +240,15 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
                     type="number"
                     min="1"
                     value={formData.prepTime}
+                    onBlur={() => setTouched(prev => ({ ...prev, prepTime: true }))}
                     onChange={(e) => handleInputChange('prepTime', parseInt(e.target.value) || 0)}
                     placeholder="30"
                     className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-orange-500 transition-colors ${
-                      errors.prepTime ? 'border-red-500' : 'border-gray-300 focus:border-orange-500'
+                      touched.prepTime && errors.prepTime ? 'border-red-500' : 'border-gray-300 focus:border-orange-500'
                     }`}
                   />
                 </div>
-                {errors.prepTime && (
+                {touched.prepTime && errors.prepTime && (
                   <p className="text-red-500 text-sm mt-1">{errors.prepTime}</p>
                 )}
               </div>
@@ -342,13 +353,14 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
               <textarea
                 value={formData.steps}
                 onChange={(e) => handleInputChange('steps', e.target.value)}
+                onBlur={() => setTouched(prev => ({ ...prev, steps: true }))}
                 placeholder={`1. Preheat oven to 350°F...\n2. Mix all dry ingredients...\n3. Add wet ingredients...`}
                 rows={10}
                 className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-orange-500 transition-colors resize-none ${
-                  errors.steps ? 'border-red-500' : 'border-gray-300 focus:border-orange-500'
+                  touched.steps && errors.steps ? 'border-red-500' : 'border-gray-300 focus:border-orange-500'
                 }`}
               />
-              {errors.steps && (
+              {touched.steps && errors.steps && (
                 <p className="text-red-500 text-sm mt-1">{errors.steps}</p>
               )}
             </div>
@@ -365,7 +377,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
             </button>
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={!isFormValid || isSubmitting}
               className="cursor-pointer flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-300 disabled:opacity-50"
             >
               <Save className="h-5 w-5" />

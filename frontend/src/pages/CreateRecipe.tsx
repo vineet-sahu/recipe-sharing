@@ -11,7 +11,6 @@ export const CreateRecipe: React.FC = () => {
   return (
     <RecipeForm 
     onSave = {(recipe: Recipe) => {
-      console.log("reciepe======", recipe);
       if(recipe?._id){
         navigate("/recipes/" + recipe?._id);
       }
