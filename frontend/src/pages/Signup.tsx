@@ -24,6 +24,10 @@ export const Signup = () =>{
 
     if (!name.trim()) {
       errors.name = "Name is required";
+    } else if (name.trim().length < 3) {  
+      errors.name = "Name must be at least 3 characters";
+    } else if (name.trim().length > 50) {  
+      errors.name = "Name must not be more than 50 characters";
     }
 
     if (!email) {
@@ -54,7 +58,7 @@ export const Signup = () =>{
 
     setLoading(true);
     try {
-      await registerUser({ name, email, password }); // call your API
+      await registerUser({ name, email, password });
       console.log("Signup successful, redirecting to login...");
       toast.success("Signup successful, redirecting to login...");
       navigate("/login");
@@ -67,23 +71,55 @@ export const Signup = () =>{
     }
   };
 
+  const validateField = (field: string, value: string) => {
+    let error = "";
+  
+    switch (field) {
+      case "name":
+        if (!value.trim()) error = "Name is required";
+        else if (value.trim().length < 3) error = "Name must be at least 3 characters";
+        else if (value.trim().length > 50) error = "Name must not be more than 50 characters";
+        break;
+  
+      case "email":
+        if (!value) error = "Email is required";
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+          error = "Enter a valid email address";
+        break;
+  
+      case "password":
+        if (!value) error = "Password is required";
+        else if (value.length < 4) error = "Password must be at least 4 characters";
+        break;
+  
+      case "confirmPassword":
+        if (value !== password) error = "Passwords do not match";
+        break;
+    }
+  
+    setFieldErrors((prev) => ({ ...prev, [field]: error }));
+    return error === "";
+  };
+  
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-green-100 via-white to-green-50 px-4">
       <div className="w-full max-w-md bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-8 border border-gray-200">
-        {/* Header */}
         <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">
           Create an Account
         </h2>
 
         <form onSubmit={handleSubmit}>
-          {/* Name */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Name
             </label>
             <input
               type="text"
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                validateField("name", e.target.value);
+              }}
               value={name}
               placeholder="Enter your name"
               className={`w-full px-4 py-2 rounded-lg border ${
@@ -95,14 +131,16 @@ export const Signup = () =>{
             )}
           </div>
 
-          {/* Email */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email
             </label>
             <input
               type="email"
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                validateField("email", e.target.value);
+              }}              
               value={email}
               placeholder="Enter your email"
               className={`w-full px-4 py-2 rounded-lg border ${
@@ -114,7 +152,6 @@ export const Signup = () =>{
             )}
           </div>
 
-          {/* Password */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
@@ -122,7 +159,11 @@ export const Signup = () =>{
             <input
               type="password"
               placeholder="Enter your password"
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                validateField("password", e.target.value);
+                validateField("confirmPassword", confirmPassword); 
+              }}
               value={password}
               className={`w-full px-4 py-2 rounded-lg border ${
                 fieldErrors.password ? "border-red-500" : "border-gray-300"
@@ -135,7 +176,6 @@ export const Signup = () =>{
             )}
           </div>
 
-          {/* Confirm Password */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Confirm Password
@@ -143,7 +183,10 @@ export const Signup = () =>{
             <input
               type="password"
               placeholder="Confirm your password"
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                validateField("confirmPassword", e.target.value);
+              }}
               value={confirmPassword}
               className={`w-full px-4 py-2 rounded-lg border ${
                 fieldErrors.confirmPassword ? "border-red-500" : "border-gray-300"
@@ -156,12 +199,10 @@ export const Signup = () =>{
             )}
           </div>
 
-          {/* General Error */}
           {error && (
             <p className="text-red-600 text-sm text-center mb-4">{error}</p>
           )}
 
-          {/* Signup button */}
           <button
             type="submit"
             className="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition font-medium"
@@ -171,14 +212,12 @@ export const Signup = () =>{
           </button>
         </form>
 
-        {/* Divider */}
         <div className="my-6 flex items-center">
           <div className="flex-grow border-t border-gray-300"></div>
           <span className="px-3 text-gray-500 text-sm">or</span>
           <div className="flex-grow border-t border-gray-300"></div>
         </div>
 
-        {/* Login link */}
         <p className="text-center text-sm text-gray-600">
           Already have an account?{" "}
           <a

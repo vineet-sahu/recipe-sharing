@@ -35,7 +35,6 @@ const AppRoutes = () => {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
 
-      {/* Catch-all */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

@@ -1,5 +1,4 @@
 import mongoose, { Schema, Document } from "mongoose";
-
 export interface IUser extends Document {
   name?: string;
   username?: string;
@@ -11,8 +10,8 @@ export interface IUser extends Document {
 
 const UserSchema: Schema = new Schema(
   {
-    name: { type: String, trim: true },
-    username: { type: String, trim: true },
+    name: { type: String, trim: true, minLength: 3, maxLength: 50 },
+    username: { type: String, trim: true, required: false },
 
     email: {
       type: String,

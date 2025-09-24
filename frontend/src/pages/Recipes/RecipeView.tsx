@@ -20,7 +20,6 @@ const RecipeView: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [hoverRating, setHoverRating] = useState(0);
-  // const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
 
   const { data: recipe, isLoading, error } = useRecipe(id!);
@@ -73,7 +72,7 @@ const RecipeView: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
-      {/* Header */}
+      
       <div className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center gap-4">
@@ -89,7 +88,7 @@ const RecipeView: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Recipe Hero */}
+        
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 mb-8">
           <div className="relative h-96 bg-gradient-to-r from-orange-500 to-red-500">
             {recipe.image ? (
@@ -105,7 +104,7 @@ const RecipeView: React.FC = () => {
             )}
             <div className="absolute inset-0 bg-black/30"></div>
             
-            {/* Recipe Title Overlay */}
+            
             <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
               <div className="flex flex-wrap items-center gap-2 mb-4">
                 <span className="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-medium">
@@ -114,7 +113,7 @@ const RecipeView: React.FC = () => {
               </div>
               <h1 className="text-4xl sm:text-5xl font-bold mb-4">{recipe.title}</h1>
               
-              {/* Quick Stats */}
+              
               <div className="flex flex-wrap items-center gap-6 text-sm">
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
@@ -136,18 +135,18 @@ const RecipeView: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Ingredients Section */}
+          
           { recipe && <Ingredients recipe={recipe} /> }
 
-          {/* Instructions and Interactions Section */}
+          
           <div className="lg:col-span-2 space-y-8">
-            {/* Instructions */}
+            
             <Steps steps={steps} />
 
-            {/* Rating Section */}
+            
             <Ratings { ...{handleRating ,setHoverRating, hoverRating, recipe}} />
 
-            {/* Comments Section */}
+            
             <CommentsSection
               comments={fetchedComments}
               onSubmitComment={handleCommentSubmit}   

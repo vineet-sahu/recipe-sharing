@@ -7,9 +7,7 @@ const api = axios.create({
 
 api.interceptors.response.use((response)=> response, (error)=>{
   if (error.response && error.response.status === 401) {
-    console.warn("Unauthorized! Clearing session...");
-
-    // window.location.href = "/login";
+    console.warn("Unauthorized!...");
   }
   return Promise.reject(error);
 });

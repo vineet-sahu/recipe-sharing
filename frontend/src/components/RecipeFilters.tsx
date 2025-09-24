@@ -27,7 +27,6 @@ const RecipeFilters: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
-        {/* Search */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <input
@@ -41,7 +40,6 @@ const RecipeFilters: React.FC = () => {
           />
         </div>
 
-        {/* Category Filter */}
         <select
           value={filters.categoryFilter?.toLowerCase() ?? ""}
           onChange={(e) =>
@@ -57,7 +55,6 @@ const RecipeFilters: React.FC = () => {
           <option value="breakfast">Breakfast</option>
         </select>
 
-        {/* Rating Filter */}
         <select
           value={filters.ratingFilter ?? ""}
           onChange={(e) =>
@@ -73,7 +70,6 @@ const RecipeFilters: React.FC = () => {
           <option value="4.5">4.5★ & above</option>
         </select>
 
-        {/* Time Filter */}
         <select
           value={filters.timeFilter ?? ""}
           onChange={(e) =>
@@ -90,7 +86,6 @@ const RecipeFilters: React.FC = () => {
           <option value="60">Long (≤60 min)</option>
         </select>
 
-        {/* Sort */}
         <select
           value={filters.sortBy}
           onChange={(e) => setFilters((prev) => ({ ...prev, sortBy: e.target.value }))}

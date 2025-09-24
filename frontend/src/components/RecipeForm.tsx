@@ -154,18 +154,10 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
-      {/* Header */}
       <div className="bg-white/80 backdrop-blur-md border-b border-gray-200 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex items-center gap-4">
-              {/* <button
-                onClick={onCancel}
-                className="flex cursor-pointer items-center gap-2 text-gray-600 hover:text-orange-600 transition-colors"
-              >
-                <ArrowLeft className="h-5 w-5" />
-                <span className="font-medium">Back</span>
-              </button> */}
               <div>
                 <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 flex items-center gap-3">
                   <div className="bg-gradient-to-r from-orange-500 to-red-500 p-2 rounded-full">
@@ -182,14 +174,12 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
         </div>
       </div>
 
-      {/* Form */}
       <form onSubmit={handleSubmit}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
             <h2 className="text-xl font-bold text-gray-900 mb-6">Basic Information</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Recipe Title */}
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Recipe Title *
@@ -207,8 +197,6 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
                   <p className="text-red-500 text-sm mt-1">{errors.title}</p>
                 )}
               </div>
-
-              {/* Category */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Category *
@@ -232,7 +220,6 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
                 )}
               </div>
 
-              {/* Prep Time */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Preparation Time (minutes) *
@@ -255,37 +242,7 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
                 )}
               </div>
 
-              {/* Image URL */}
-              {/* <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Recipe Image URL (optional)
-                </label>
-                <div className="relative">
-                  <Upload className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                  <input
-                    type="url"
-                    value={formData.image}
-                    onChange={(e) => handleInputChange('image', e.target.value)}
-                    placeholder="https://example.com/recipe-image.jpg"
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors"
-                  />
-                </div>
-                {formData.image && (
-                  <div className="mt-3">
-                    <img
-                      src={formData.image}
-                      alt="Recipe preview"
-                      className="w-32 h-24 object-cover rounded-lg border border-gray-200"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
-                      }}
-                    />
-                  </div>
-                )}
-              </div> */}
-
-              {/* Image Upload */}
-                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
                   <h2 className="text-xl font-bold text-gray-900 mb-6">Recipe Image</h2>
                   <div
                     {...getRootProps()}
@@ -328,7 +285,6 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
                 </div>
             </div>
           </div>
-          {/* Ingredients */}
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-gray-900">Ingredients</h2>
@@ -377,7 +333,6 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
             )}
           </div>
 
-          {/* Instructions */}
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
             <h2 className="text-xl font-bold text-gray-900 mb-6">Instructions</h2>
             <div>
@@ -399,7 +354,6 @@ const RecipeForm: React.FC<RecipeFormProps> = ({
             </div>
           </div>
 
-          {/* Actions */}
           <div className="flex justify-end gap-4">
             <button
               type="button"

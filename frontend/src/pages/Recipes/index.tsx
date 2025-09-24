@@ -88,7 +88,7 @@ const Recipes: React.FC = () => {
 
   return (
     <>
-    {/* Header */}
+    
     <div className="bg-white/80 backdrop-blur-md border-b border-gray-200 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -107,7 +107,7 @@ const Recipes: React.FC = () => {
       </div>
     </div>
 
-    {/* Filters + Results */}
+    
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <RecipeFilters />
 
@@ -124,7 +124,7 @@ const Recipes: React.FC = () => {
             ))}
           </div>
 
-          {/* Loader for Infinite Scroll */}
+          
           <div ref={loaderRef} className="py-10 text-center">
             {isFetchingNextPage && <p>Loading more recipes...</p>}
           </div>

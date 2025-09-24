@@ -3,7 +3,6 @@ import { Utensils } from "lucide-react"
 
 export const Ingredients = ({recipe}: any) => {
   return  <div className="grid grid-cols-1 gap-8">
-  {/* Ingredients Section */}
   <div className="lg:col-span-1">
     <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
       <div className="flex items-center gap-3 mb-6">

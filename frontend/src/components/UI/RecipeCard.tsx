@@ -26,7 +26,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
 
   return (
     <div className="rounded-xl overflow-hidden shadow hover:shadow-lg transition group flex flex-col">
-      {/* Image */}
+      
       <div className="aspect-w-16 aspect-h-9">
         <div className="relative h-48 overflow-hidden">
           {(recipe.image || recipe.imageUrl) ? (
@@ -41,7 +41,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
             </div>
           )}
 
-          {/* Category Badge */}
+          
           <div className="absolute top-3 left-3">
             <a
               href={`/recipes?category=${encodeURIComponent(recipe.category)}`}
@@ -52,15 +52,10 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
               {recipe.category}
             </a>
           </div>
-
-          {/* Heart Icon */}
-          {/* <button className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full hover:bg-white transition-colors">
-            <Heart className="h-4 w-4 text-gray-600 hover:text-red-500 transition-colors" />
-          </button> */}
         </div>
       </div>
 
-      {/* Content */}
+      
       <div className="p-6 flex-1">
         <div className="flex items-start justify-between mb-3">
           <h3 className="text-lg font-bold text-gray-900 group-hover:text-orange-600 transition-colors line-clamp-2">
@@ -68,7 +63,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
           </h3>
         </div>
 
-        {/* Rating */}
+        
         <div className="flex items-center gap-2 mb-3">
           <div className="flex items-center">{renderStars(recipe.rating)}</div>
           <span className="text-sm font-medium text-gray-700">
@@ -76,7 +71,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
           </span>
         </div>
 
-        {/* Ingredients */}
+        
         <div className="mb-4">
           <p className="text-sm text-gray-600 line-clamp-2">
             {recipe.ingredients.slice(0, 3).join(", ")}
@@ -85,7 +80,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
           </p>
         </div>
 
-        {/* Meta Info */}
+        
         <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
           <div className="flex items-center gap-1">
             <Clock className="h-4 w-4" />
@@ -97,16 +92,13 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
           </div>
         </div>
 
-        {/* Action Buttons */}
+        
         <div className="flex gap-2">
           <button className="flex-1 cursor-pointer bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-xl font-medium hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
           onClick={() => window.location.href = `/recipes/${recipe._id}`}>
             <Eye className="h-4 w-4" />
             View Recipe
           </button>
-          {/* <button className="px-4 py-2 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors flex items-center justify-center">
-            <Users className="h-4 w-4" />
-          </button> */}
         </div>
       </div>
     </div>

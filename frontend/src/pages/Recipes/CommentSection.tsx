@@ -52,7 +52,7 @@ const CommentsSection = ({ comments, onSubmitComment }: CommentsSectionProps) =>
 
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-      {/* Header */}
+      
       <div className="flex items-center gap-3 mb-6">
         <div className="bg-gradient-to-r from-orange-500 to-red-500 p-2 rounded-full">
           <MessageCircle className="h-5 w-5 text-white" />
@@ -62,7 +62,7 @@ const CommentsSection = ({ comments, onSubmitComment }: CommentsSectionProps) =>
         </h2>
       </div>
 
-      {/* Comment Form */}
+      
       <form onSubmit={handleSubmit} className="mb-8">
         <textarea
           value={newComment}
@@ -86,7 +86,7 @@ const CommentsSection = ({ comments, onSubmitComment }: CommentsSectionProps) =>
         )}
       </form>
 
-      {/* Comments List */}
+      
       <div className="space-y-4">
         {comments.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
