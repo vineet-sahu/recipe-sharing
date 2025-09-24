@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { loginUser } from "../services/auth";
 import { toast } from "react-toastify";
+import { EMAIL_REGEX } from "../utils/constants";
 
 export default function Login() {
   const { afterLogin } = useAuth();
@@ -17,20 +18,32 @@ export default function Login() {
   const redirectTo = params.get("redirect") || "/";
 
   const validate = () => {
-    const errors: { email?: string; password?: string } = {};
+    // debugger;
+    return !validatePassword(password) && !validateEmail(email);
+  };
 
-    if (!email) {
+
+  const validatePassword = (pwd: string) => {
+    const errors: { password?: string, email?: string } = { ...fieldErrors, password: ""};
+    if (!pwd) {
+      errors.password = "Password is required";
+    } else if (pwd.length < 6) {
+      errors.password = "Password must be at least 6 characters";
+    } else if (pwd.length > 12) {
+      errors.password = "Password must be max 12 characters";
+    }
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+
+  const validateEmail = (eml: string) => {
+    const errors: { password?: string, email?: string } = { ...fieldErrors, email: ""};
+    if (!eml) {
       errors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
+    } else if (!EMAIL_REGEX.test(eml)) {
       errors.email = "Enter a valid email address";
     }
-
-    if (!password) {
-      errors.password = "Password is required";
-    } else if (password.length < 4) {
-      errors.password = "Password must be at least 4 characters";
-    }
-
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -74,7 +87,7 @@ export default function Login() {
             </label>
             <input
               type="email"
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => { setEmail(e.target.value); validateEmail(e.target.value)}}
               value={email}
               placeholder="Enter your email"
               className={`w-full px-4 py-2 rounded-lg border ${
@@ -94,7 +107,9 @@ export default function Login() {
             <input
               type="password"
               placeholder="Enter your password"
-              onChange={(e) => setPassword(e.target.value)}
+              minLength={6}
+              maxLength={12}
+              onChange={(e) => { setPassword(e.target.value); validatePassword(e.target.value)}}
               value={password}
               className={`w-full px-4 py-2 rounded-lg border ${
                 fieldErrors.password ? "border-red-500" : "border-gray-300"

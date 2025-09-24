@@ -1,10 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { MessageCircle, Send } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { CommentCard } from "../../components/CommentCard";
-// import { useAuth } from "../context/AuthContext";
-// import CommentCard from "../../CommentCard";
 
 interface Comment {
   _id: string;
@@ -95,7 +94,7 @@ const CommentsSection = ({ comments, onSubmitComment }: CommentsSectionProps) =>
             <p>No comments yet. Be the first to share your thoughts!</p>
           </div>
         ) : (
-          comments.map((comment) => <CommentCard key={comment._id} comment={comment} />)
+          comments.map((comment) => <CommentCard key={comment._id} comment={{...comment, text: comment.text || ""}} />)
         )}
       </div>
     </div>

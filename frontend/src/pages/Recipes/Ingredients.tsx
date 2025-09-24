@@ -2,7 +2,7 @@
 import { Utensils } from "lucide-react"
 
 export const Ingredients = ({recipe}: any) => {
-  return  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  return  <div className="grid grid-cols-1 gap-8">
   {/* Ingredients Section */}
   <div className="lg:col-span-1">
     <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
@@ -14,7 +14,7 @@ export const Ingredients = ({recipe}: any) => {
       </div>
 
       <div className="space-y-3">
-        {recipe?.ingredients.map((ingredient: any, index: any) => (
+        {(recipe?.ingredients || []).map((ingredient: any, index: any) => (
           <div
             key={index}
             className="p-3 rounded-xl border border-gray-200 hover:border-orange-200 hover:bg-orange-50 transition-all"

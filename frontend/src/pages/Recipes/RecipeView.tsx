@@ -137,12 +137,12 @@ const RecipeView: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Ingredients Section */}
-          { recipe && <Ingredients recipe /> }
+          { recipe && <Ingredients recipe={recipe} /> }
 
           {/* Instructions and Interactions Section */}
           <div className="lg:col-span-2 space-y-8">
             {/* Instructions */}
-            <Steps {...steps} />
+            <Steps steps={steps} />
 
             {/* Rating Section */}
             <Ratings { ...{handleRating ,setHoverRating, hoverRating, recipe}} />
